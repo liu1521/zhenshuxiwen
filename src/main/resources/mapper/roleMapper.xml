@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.novel.module.role.RoleMapper">
+
+    <sql id="baseSql">
+        r.id,
+        r.role_name
+    </sql>
+
+    <select id="getRoleById" resultType="com.book.novel.module.role.entity.RoleEntity">
+        select
+        <include refid="baseSql"></include>
+        from
+        role r
+        where
+        r.id=#{id}
+    </select>
+
+</mapper>
