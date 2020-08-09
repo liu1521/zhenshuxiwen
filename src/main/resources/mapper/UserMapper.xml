@@ -3,10 +3,9 @@
 <mapper namespace="com.book.novel.module.user.UserMapper">
 
     <resultMap id="loginDetailDTO" type="com.book.novel.module.login.dto.LoginDetailDTO">
-
     </resultMap>
 
-    <sql id="baseSql">
+    <sql id="all">
         u.id,
         u.username,
         u.email,
@@ -26,7 +25,7 @@
 
     <select id="getLoginDetailDTO" resultMap="loginDetailDTO">
         select
-        <include refid="baseSql"></include>
+        <include refid="all"></include>
         from
         user u
         left join role r on u.role_id=r.id
@@ -36,7 +35,7 @@
 
     <select id="getUserById" resultType="com.book.novel.module.user.entity.UserEntity">
         select
-        <include refid="baseSql"></include>
+        <include refid="all"></include>
         from
         user u
         where u.id=#{id}
@@ -44,11 +43,21 @@
 
     <select id="getUserByUsername" resultType="com.book.novel.module.user.entity.UserEntity">
         select
-        <include refid="baseSql"></include>
+        <include refid="all"></include>
         from
         user u
         where
         u.username=#{username}
     </select>
 
+    <update id="updateUserLoginInfo">
+        update
+        user u
+        set
+        u.login_count=#{loginCount},
+        u.last_login_ip=#{lastLoginIp},
+        u.last_login_time=#{lastLoginTime}
+        where
+        u.id = #{id}
+    </update>
 </mapper>

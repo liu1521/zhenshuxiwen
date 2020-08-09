@@ -22,11 +22,11 @@ public class UserLoginFormVO {
     @ApiModelProperty(example = "123456")
     private String loginPwd;
 
-//    @NotNull(message = "验证码id不能为空")
-//    @ApiModelProperty(value = "验证码uuid")
-//    private String codeUuid;
+    @NotNull(message = "验证码id不能为空")
+    @ApiModelProperty(value = "验证码uuid")
+    private String codeUuid;
 
-//    @NotNull(message = "验证码不能为空")
-//    @ApiModelProperty(value = "验证码")
-//    private String code;
+    @NotNull(message = "验证码不能为空")
+    @ApiModelProperty(value = "验证码")
+    private String code;
 }

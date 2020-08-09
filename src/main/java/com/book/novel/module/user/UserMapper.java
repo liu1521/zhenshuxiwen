@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 public interface UserMapper {
 
-    LoginDetailDTO getLoginDetailDTOByUsername(@Param("username") String username);
-
     UserEntity getUserById(@Param("id") Integer id);
 
     UserEntity getUserByUsername(@Param("username") String username);
+
+    void updateUserLoginInfo(UserEntity userEntity);
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * @Author: liu
  * @Date: 2020/8/7
- * @Description: 登陆详情VO
+ * @Description: 登陆详情DTO
  */
 
 @Data
@@ -45,6 +45,4 @@ public class LoginDetailDTO {
     @ApiModelProperty("角色")
     private String role;
 
-    @ApiModelProperty("登陆token")
-    private String xAccessToken;
 }

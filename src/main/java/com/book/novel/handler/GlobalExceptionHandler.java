@@ -2,10 +2,12 @@ package com.book.novel.handler;
 
 import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.ResponseDTO;
-import com.book.novel.common.exception.BusinessException;
+import com.book.novel.module.user.constant.UserResponseCodeConst;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,7 +38,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseDTO exceptionHandler(Exception e) {
-        log.error("error:", e);
+         log.error("error:", e);
 
         // http 请求方式错误
         if (e instanceof HttpRequestMethodNotSupportedException) {
@@ -45,6 +47,11 @@ public class GlobalExceptionHandler {
 
         // 参数类型错误
         if (e instanceof TypeMismatchException) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+        }
+
+        // 数据转换时属性绑定错误
+        if (e instanceof BindException) {
             return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
         }
 
@@ -60,8 +67,9 @@ public class GlobalExceptionHandler {
             return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM, String.join(",", msgList));
         }
 
-        if (e instanceof BusinessException) {
-            return ResponseDTO.wrap(ResponseCodeConst.SYSTEM_ERROR);
+        // 未授权用户
+        if (e instanceof UnauthenticatedException) {
+            return ResponseDTO.wrap(UserResponseCodeConst.UNAUTHENTICATED);
         }
 
         return ResponseDTO.wrap(ResponseCodeConst.SYSTEM_ERROR);

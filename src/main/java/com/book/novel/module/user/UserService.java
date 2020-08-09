@@ -18,10 +18,6 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public LoginDetailDTO getLoginDetailDTOByUsername(String username) {
-        return userMapper.getLoginDetailDTOByUsername(username);
-    }
-
     public UserBO getUserBOById(Integer id) {
         UserEntity userEntity = userMapper.getUserById(id);
         UserBO userBO = new UserBO(userEntity);
@@ -30,5 +26,9 @@ public class UserService {
 
     public UserEntity getUserByUsername(String username) {
         return userMapper.getUserByUsername(username);
+    }
+
+    public void updateUserLoginInfo(UserEntity userEntity) {
+        userMapper.updateUserLoginInfo(userEntity);
     }
 }

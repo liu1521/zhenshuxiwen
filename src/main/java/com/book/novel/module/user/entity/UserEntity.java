@@ -67,7 +67,7 @@ public class UserEntity implements Serializable {
     /**
      * 上次登陆时间
      */
-    private String lastLoginTime;
+    private Date lastLoginTime;
 
     /**
      * 经验  floor(exp/30)则为当前等级  exp%30为当前经验

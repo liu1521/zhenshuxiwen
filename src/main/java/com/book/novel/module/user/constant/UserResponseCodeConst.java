@@ -1,6 +1,7 @@
 package com.book.novel.module.user.constant;
 
 import com.book.novel.common.constant.ResponseCodeConst;
+import org.apache.shiro.authz.UnauthenticatedException;
 
 /**
  * @Author: liu
@@ -43,6 +44,16 @@ public class UserResponseCodeConst extends ResponseCodeConst {
      * 邮箱已经注册
      */
     public static final UserResponseCodeConst EMAIL_EXISTS = new UserResponseCodeConst(3008, "邮箱已经注册");
+
+    /**
+     * 未授权用户
+     */
+    public static final UserResponseCodeConst UNAUTHENTICATED = new UserResponseCodeConst(3009, "您未被授权");
+
+    /**
+     * 注销成功
+     */
+    public static final UserResponseCodeConst LOGOUT_SUCCESS = new UserResponseCodeConst(3010, "注销成功");
 
     /**
      * 验证码无效

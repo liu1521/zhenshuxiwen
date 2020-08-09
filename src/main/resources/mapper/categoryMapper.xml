@@ -4,14 +4,14 @@
 
     <resultMap id="categoryVO" type="com.book.novel.module.category.vo.CategoryVO" ></resultMap>
 
-    <sql id="baseSql" >
+    <sql id="all" >
         ca.id,
         ca.category_name
     </sql>
     
     <select id="listCategory" resultMap="categoryVO">
         select
-        <include refid="baseSql"></include>
+        <include refid="all"></include>
         from
         category ca
     </select>
