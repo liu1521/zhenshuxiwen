@@ -17,11 +17,11 @@ public class UserRegisterFormVO implements Serializable {
 
     @NotNull(message = "登陆名不能为空")
     @ApiModelProperty(example = "admin")
-    private String registerUsername;
+    private String username;
 
     @NotNull(message = "密码不能为空")
     @ApiModelProperty(example = "123456")
-    private String registerPwd;
+    private String password;
 
     @NotNull(message = "邮箱不能为空")
     @ApiModelProperty(example = "1111@qq.com")

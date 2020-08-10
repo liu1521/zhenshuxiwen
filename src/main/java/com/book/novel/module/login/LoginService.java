@@ -28,6 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -60,8 +63,7 @@ public class LoginService {
     private ValueOperations<String, String> redisValueOperations;
 
     public ResponseDTO<LoginDetailDTO> login(@Valid UserLoginFormVO userLoginFormVO, HttpServletRequest request) {
-        String redisVerificationCodeUuid = redisValueOperations.get(userLoginFormVO.getCodeUuid());
-        redisValueOperations.getOperations().delete(userLoginFormVO.getCodeUuid());
+        String redisVerificationCodeUuid = getVerificationCodeFromRedis(userLoginFormVO.getCodeUuid());
         if (StringUtils.isEmpty(redisVerificationCodeUuid)) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
@@ -130,38 +132,68 @@ public class LoginService {
     }
 
     public ResponseDTO<ResponseCodeConst> register(UserRegisterFormVO userRegisterFormVO) {
-        String redisVerificationCode = redisValueOperations.get(userRegisterFormVO.getCodeUuid());
-        redisValueOperations.getOperations().delete(userRegisterFormVO.getCodeUuid());
+        String redisVerificationCode = getVerificationCodeFromRedis(userRegisterFormVO.getCodeUuid());
         if (StringUtils.isEmpty(redisVerificationCode)) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
-        if (redisVerificationCode.equalsIgnoreCase(userRegisterFormVO.getCode())) {
+        if (! redisVerificationCode.equalsIgnoreCase(userRegisterFormVO.getCode())) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
 
-        String registerUsername = userRegisterFormVO.getRegisterUsername();
+        // 检测用户名是否存在
+        String registerUsername = userRegisterFormVO.getUsername();
         Integer id = userService.getIdByUsername(registerUsername);
         if (id != null) {
             return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_NAME_EXISTS);
         }
 
+        // 检测邮箱是否存在
         String registerEmail = userRegisterFormVO.getEmail();
-        id = userService.getIdByEmail(registerEmail);
-        if (id != null) {
-            return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+        UserEntity userEntity = userService.getUserByEmail(registerEmail);
+        if (userEntity != null) {
+            // 检测账号是否是待激活状态
+            if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userEntity.getStatus())) {
+                // 待激活状态，待激活状态持续5分钟，5分钟后失效
+                Date createTime = userEntity.getCreateTime();
+                LocalDateTime ct = LocalDateTime.ofInstant(createTime.toInstant(), ZoneId.systemDefault());
+                LocalDateTime now = LocalDateTime.now();
+                Duration duration = Duration.between(ct, now);
+                // 待激活状态未失效，不可重复注册
+                if (duration.toMinutes() < 5) {
+                    return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+                }
+            } else {
+                // 正常或封禁状态
+                return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+            }
         }
 
-        // 激活邮箱300s后失效
+        // 300s内不激活就失效
         String mailUuid = UUID.randomUUID().toString();
         redisValueOperations.set(mailUuid, userRegisterFormVO.getEmail(), 300L, TimeUnit.SECONDS);
 
-
         String subject = "枕书席文";
         String content = "<h1>欢迎使用枕书席文,点击下方链接激活账号</h1>" +
-                "<a href='http://127.0.0.1/api/user/active?mailUuid='"+mailUuid+">激活</a>";
+                "<a href='http://127.0.0.1/api/user/active?mailUuid="+mailUuid+"'>激活</a>";
         mailService.sendHtmlMail(userRegisterFormVO.getEmail(), subject, content);
 
+        UserEntity saveUser = new UserEntity();
+        saveUser.setEmail(userRegisterFormVO.getEmail());
+        saveUser.setUsername(userRegisterFormVO.getUsername());
+        saveUser.setPassword(Md5Util.encryptPassword(userRegisterFormVO.getPassword(), userRegisterFormVO.getUsername()));
+        saveUser.setStatus(UserStatusEnum.NOT_ACTIVE.getValue());
+        saveUser.setCreateTime(new Date());
 
+        // 设置性别
+        if (UserSexEnum.UNKNOWN.getDesc().equals(userRegisterFormVO.getSex())) {
+            saveUser.setSex(UserSexEnum.UNKNOWN.getValue());
+        } else if (UserSexEnum.MALE.getDesc().equals(userRegisterFormVO.getSex())) {
+            saveUser.setSex(UserSexEnum.MALE.getValue());
+        } else if (UserSexEnum.FEMALE.getDesc().equals(userRegisterFormVO.getSex())) {
+            saveUser.setSex(UserSexEnum.FEMALE.getValue());
+        }
+
+        userService.saveUser(saveUser);
 
         return ResponseDTO.wrap(UserResponseCodeConst.REGISTER_SUCCESS);
     }
@@ -204,4 +236,11 @@ public class LoginService {
     private String buildVerificationCodeRedisKey(String uuid) {
         return String.format(VERIFICATION_CODE_REDIS_PREFIX, uuid);
     }
+
+    private String getVerificationCodeFromRedis(String key) {
+        String verificationCode = redisValueOperations.get(key);
+        redisValueOperations.getOperations().delete(key);
+        return verificationCode;
+    }
+
 }

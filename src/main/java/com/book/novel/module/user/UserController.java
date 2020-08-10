@@ -30,4 +30,11 @@ public class UserController {
         return userService.testUsername(username);
     }
 
+    @GetMapping("/api/user/active")
+    @ApiOperation(value = "激活账号", notes = "激活链接5分钟内有效")
+    @NoNeedLogin
+    public ResponseDTO<ResponseCodeConst> active(String mailUuid) {
+        return userService.active(mailUuid);
+    }
+
 }

@@ -69,6 +69,11 @@ public class UserResponseCodeConst extends ResponseCodeConst {
      */
     public static final UserResponseCodeConst NO_ACTIVE = new UserResponseCodeConst(3012, "账号未激活!");
 
+    /**
+     * 激活码无效
+     */
+    public static final UserResponseCodeConst ACTIVE_CODE_INVALID = new UserResponseCodeConst(3013, "激活码无效");
+
     public UserResponseCodeConst(int code, String msg) {
         super(code, msg);
     }

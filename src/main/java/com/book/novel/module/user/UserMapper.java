@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * @Author: liu
  * @Date: 2020/8/7
@@ -21,9 +23,13 @@ public interface UserMapper {
 
     void updateUserLoginInfo(UserEntity userEntity);
 
-    UserEntity getUserByUsernameAndPassword(@Param("loginName") String loginName, @Param("loginPwd") String loginPwd);
+    UserEntity getUserByUsernameAndPassword(@Param("username") String loginName, @Param("password") String loginPwd);
 
     Integer getIdByUsername(@Param("username") String username);
 
-    Integer getIdByEmail(@Param("email") String email);
+    UserEntity getUserByEmail(@Param("email") String email);
+
+    void updateStatusToOneById(Integer id);
+
+    void saveUser(UserEntity saveUser);
 }

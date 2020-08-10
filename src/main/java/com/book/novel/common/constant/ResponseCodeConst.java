@@ -31,6 +31,8 @@ public class ResponseCodeConst {
 
     public static final ResponseCodeConst CONTENT_TYPE_ERROR = new ResponseCodeConst(116, "不支持的contentType");
 
+    public static final ResponseCodeConst MAIL_ERROR = new ResponseCodeConst(117, "邮箱错误");
+
     protected int code;
 
     protected String msg;

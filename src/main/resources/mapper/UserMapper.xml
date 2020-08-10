@@ -23,6 +23,12 @@
         u.role_id
     </sql>
 
+    <insert id="saveUser">
+        insert into
+        user(username,email,password,sex,create_time)
+        values (#{username}, #{email}, #{password}, #{sex}, #{createTime})
+    </insert>
+
     <update id="updateUserLoginInfo">
         update
         user u
@@ -31,7 +37,16 @@
         u.last_login_ip=#{lastLoginIp},
         u.last_login_time=#{lastLoginTime}
         where
-        u.id = #{id}
+        u.id=#{id}
+    </update>
+
+    <update id="updateStatusToOneById">
+        update
+        user u
+        set
+        u.status=1
+        where
+        u.id=#{id}
     </update>
 
     <select id="getLoginDetailDTO" resultMap="loginDetailDTO">
@@ -67,8 +82,8 @@
         from
         user u
         where
-        u.username=#{loginName}
-        and u.password=#{loginPwd}
+        u.username=#{username}
+        and u.password=#{password}
     </select>
 
     <select id="getIdByUsername" resultType="java.lang.Integer">
@@ -80,7 +95,7 @@
         u.username=#{username}
     </select>
 
-    <select id="getIdByEmail" resultType="java.lang.Integer">
+    <select id="getUserByEmail" resultType="com.book.novel.module.user.entity.UserEntity">
         select
         u.id
         from
@@ -88,4 +103,5 @@
         where
         u.email=#{email}
     </select>
+
 </mapper>

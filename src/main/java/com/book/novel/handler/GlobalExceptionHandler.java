@@ -6,6 +6,7 @@ import com.book.novel.module.user.constant.UserResponseCodeConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mail.MailSendException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -70,6 +71,10 @@ public class GlobalExceptionHandler {
         // 不支持的请求头
         if (e instanceof HttpMediaTypeNotSupportedException) {
             return ResponseDTO.wrap(ResponseCodeConst.CONTENT_TYPE_ERROR);
+        }
+
+        if (e instanceof MailSendException) {
+            return ResponseDTO.wrap(ResponseCodeConst.MAIL_ERROR);
         }
 
         return ResponseDTO.wrap(ResponseCodeConst.SYSTEM_ERROR);

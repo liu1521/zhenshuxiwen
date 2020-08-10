@@ -42,7 +42,7 @@ public class LoginController {
         return loginService.verificationCode();
     }
 
-    @GetMapping("/api/register")
+    @PostMapping("/api/register")
     @ApiOperation(value = "注册", notes = "注册账号")
     @NoNeedLogin
     public ResponseDTO<ResponseCodeConst> register(@Valid @RequestBody UserRegisterFormVO userRegisterFormVO) {
