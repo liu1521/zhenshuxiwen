@@ -20,4 +20,10 @@ public interface UserMapper {
     UserEntity getUserByUsername(@Param("username") String username);
 
     void updateUserLoginInfo(UserEntity userEntity);
+
+    UserEntity getUserByUsernameAndPassword(@Param("loginName") String loginName, @Param("loginPwd") String loginPwd);
+
+    Integer getIdByUsername(@Param("username") String username);
+
+    Integer getIdByEmail(@Param("email") String email);
 }

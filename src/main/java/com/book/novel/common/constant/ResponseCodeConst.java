@@ -29,6 +29,8 @@ public class ResponseCodeConst {
 
     public static final ResponseCodeConst JSON_FORMAT_ERROR = new ResponseCodeConst(115, "JSON格式错误");
 
+    public static final ResponseCodeConst CONTENT_TYPE_ERROR = new ResponseCodeConst(116, "不支持的contentType");
+
     protected int code;
 
     protected String msg;

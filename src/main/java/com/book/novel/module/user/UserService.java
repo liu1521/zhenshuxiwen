@@ -1,7 +1,10 @@
 package com.book.novel.module.user;
 
+import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.user.bo.UserBO;
+import com.book.novel.module.user.constant.UserResponseCodeConst;
 import com.book.novel.module.user.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,4 +34,24 @@ public class UserService {
     public void updateUserLoginInfo(UserEntity userEntity) {
         userMapper.updateUserLoginInfo(userEntity);
     }
+
+    public UserEntity getUserByUsernameAndPassword(String loginName, String loginPwd) {
+        return userMapper.getUserByUsernameAndPassword(loginName, loginPwd);
+    }
+
+    public ResponseDTO<ResponseCodeConst> testUsername(String username) {
+        if (getIdByUsername(username) != null) {
+            return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_NAME_EXISTS);
+        } else return ResponseDTO.succ();
+    }
+
+    public Integer getIdByUsername(String username) {
+        return userMapper.getIdByUsername(username);
+    }
+
+    public Integer getIdByEmail(String email) {
+        return userMapper.getIdByEmail(email);
+    }
+
+
 }

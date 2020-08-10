@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * @Author: liu
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
  */
 
 @Data
-public class UserRegisterFormVO {
+public class UserRegisterFormVO implements Serializable {
 
     @NotNull(message = "登陆名不能为空")
     @ApiModelProperty(example = "admin")
@@ -26,12 +27,16 @@ public class UserRegisterFormVO {
     @ApiModelProperty(example = "1111@qq.com")
     private String email;
 
-//    @NotNull(message = "验证码id不能为空")
-//    @ApiModelProperty(value = "验证码uuid")
-//    private String codeUuid;
-//
-//    @NotNull(message = "验证码不能为空")
-//    @ApiModelProperty(value = "验证码")
-//    private String code;
+    @NotNull(message = "验证码id不能为空")
+    @ApiModelProperty(value = "验证码uuid")
+    private String codeUuid;
+
+    @NotNull(message = "性别不能为空")
+    @ApiModelProperty(value = "男")
+    private String sex;
+
+    @NotNull(message = "验证码不能为空")
+    @ApiModelProperty(value = "验证码")
+    private String code;
 
 }

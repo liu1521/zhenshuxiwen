@@ -66,8 +66,6 @@ public class LoginTokenService {
                 .signWith(SignatureAlgorithm.HS512, jwtKey)
                 .compact();
 
-        UserBO userBO = userService.getUserBOById(id);
-//        RequestTokenBO tokenBO = new RequestTokenBO(userBO);
         return compactJws;
     }
 

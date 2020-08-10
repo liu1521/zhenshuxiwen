@@ -4,11 +4,11 @@ import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -67,9 +67,9 @@ public class GlobalExceptionHandler {
             return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM, String.join(",", msgList));
         }
 
-        // 未授权用户
-        if (e instanceof UnauthenticatedException) {
-            return ResponseDTO.wrap(UserResponseCodeConst.UNAUTHENTICATED);
+        // 不支持的请求头
+        if (e instanceof HttpMediaTypeNotSupportedException) {
+            return ResponseDTO.wrap(ResponseCodeConst.CONTENT_TYPE_ERROR);
         }
 
         return ResponseDTO.wrap(ResponseCodeConst.SYSTEM_ERROR);

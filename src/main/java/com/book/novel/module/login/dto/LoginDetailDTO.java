@@ -45,4 +45,6 @@ public class LoginDetailDTO {
     @ApiModelProperty("角色")
     private String role;
 
+    @ApiModelProperty("xAccessToken")
+    private String xAccessToken;
 }

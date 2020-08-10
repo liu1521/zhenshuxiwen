@@ -23,6 +23,17 @@
         u.role_id
     </sql>
 
+    <update id="updateUserLoginInfo">
+        update
+        user u
+        set
+        u.login_count=#{loginCount},
+        u.last_login_ip=#{lastLoginIp},
+        u.last_login_time=#{lastLoginTime}
+        where
+        u.id = #{id}
+    </update>
+
     <select id="getLoginDetailDTO" resultMap="loginDetailDTO">
         select
         <include refid="all"></include>
@@ -50,14 +61,31 @@
         u.username=#{username}
     </select>
 
-    <update id="updateUserLoginInfo">
-        update
+    <select id="getUserByUsernameAndPassword" resultType="com.book.novel.module.user.entity.UserEntity">
+        select
+        <include refid="all"></include>
+        from
         user u
-        set
-        u.login_count=#{loginCount},
-        u.last_login_ip=#{lastLoginIp},
-        u.last_login_time=#{lastLoginTime}
         where
-        u.id = #{id}
-    </update>
+        u.username=#{loginName}
+        and u.password=#{loginPwd}
+    </select>
+
+    <select id="getIdByUsername" resultType="java.lang.Integer">
+        select
+        u.id
+        from
+        user u
+        where
+        u.username=#{username}
+    </select>
+
+    <select id="getIdByEmail" resultType="java.lang.Integer">
+        select
+        u.id
+        from
+        user u
+        where
+        u.email=#{email}
+    </select>
 </mapper>

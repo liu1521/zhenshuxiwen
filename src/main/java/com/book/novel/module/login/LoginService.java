@@ -1,6 +1,7 @@
 package com.book.novel.module.login;
 
 import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.module.mail.MailService;
 import com.book.novel.module.role.constant.RoleEnum;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import com.book.novel.common.domain.ResponseDTO;
@@ -11,15 +12,11 @@ import com.book.novel.module.user.constant.UserStatusEnum;
 import com.book.novel.module.user.entity.UserEntity;
 import com.book.novel.module.user.vo.UserLoginFormVO;
 import com.book.novel.module.user.UserService;
+import com.book.novel.module.user.vo.UserRegisterFormVO;
 import com.book.novel.util.BeanUtil;
-import com.book.novel.util.ShrioUtil;
+import com.book.novel.util.Md5Util;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
@@ -51,6 +48,12 @@ public class LoginService {
     private UserService userService;
 
     @Autowired
+    private LoginTokenService loginTokenService;
+
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
     private DefaultKaptcha defaultKaptcha;
 
     @Autowired
@@ -66,19 +69,21 @@ public class LoginService {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
 
-        String encryptPassword = ShrioUtil.encryptPassword(userLoginFormVO.getLoginPwd(), userLoginFormVO.getLoginName());
-        UsernamePasswordToken token = new UsernamePasswordToken(userLoginFormVO.getLoginName(), encryptPassword);
+        String encryptPassword = Md5Util.encryptPassword(userLoginFormVO.getLoginPwd(), userLoginFormVO.getLoginName());
 
-        Subject subject = SecurityUtils.getSubject();
-        try {
-            subject.login(token);
-        } catch (UnknownAccountException e) {
-            return ResponseDTO.wrap(UserResponseCodeConst.USER_NOT_EXISTS);
-        } catch (IncorrectCredentialsException e) {
-            return ResponseDTO.wrap(UserResponseCodeConst.PASSWORD_ERROR);
+        UserEntity userEntity = userService.getUserByUsernameAndPassword(userLoginFormVO.getLoginName(), encryptPassword);
+        if (userEntity == null) {
+            return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_FAILED);
         }
 
-        UserEntity userEntity = userService.getUserByUsername(token.getUsername());
+        if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userEntity.getStatus())) {
+            return ResponseDTO.wrap(UserResponseCodeConst.NO_ACTIVE);
+        }
+
+        if (UserStatusEnum.DISABLED.getValue().equals(userEntity.getStatus())) {
+            return ResponseDTO.wrap(UserResponseCodeConst.IS_DISABLED);
+        }
+
         String requestIp = request.getRemoteAddr();
         userEntity.setLastLoginIp(requestIp);
         userEntity.setLoginCount(userEntity.getLoginCount()+1);
@@ -87,15 +92,6 @@ public class LoginService {
 
 
         LoginDetailDTO loginDetailDTO = BeanUtil.copy(userEntity, LoginDetailDTO.class);
-
-        // 设置状态
-        if (UserStatusEnum.NORMAL.getValue().equals(userEntity.getStatus())) {
-            loginDetailDTO.setStatus(UserStatusEnum.NORMAL.getDesc());
-        } else if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userEntity.getStatus())) {
-            loginDetailDTO.setStatus(UserStatusEnum.NOT_ACTIVE.getDesc());
-        } else if (UserStatusEnum.DISABLED.getValue().equals(userEntity.getStatus())) {
-            loginDetailDTO.setStatus(UserStatusEnum.DISABLED.getDesc());
-        }
 
         // 设置性别
         if (UserSexEnum.UNKNOWN.getValue().equals(userEntity.getSex())) {
@@ -118,13 +114,56 @@ public class LoginService {
         // 设置头像url
 //        loginDetailDTO.setHeadImgUrl(FILE_URL_FIX+userEntity.getHeadImgUrl());
 
+        // 设置状态
+        loginDetailDTO.setStatus(UserStatusEnum.NORMAL.getDesc());
+
         // 设置经验
         loginDetailDTO.setExp(userEntity.getExp()%30);
 
         // 设置等级
         loginDetailDTO.setLevel(userEntity.getExp()/30 + 1);
 
+        String token = loginTokenService.generateToken(loginDetailDTO);
+        loginDetailDTO.setXAccessToken(token);
+
         return ResponseDTO.succData(loginDetailDTO);
+    }
+
+    public ResponseDTO<ResponseCodeConst> register(UserRegisterFormVO userRegisterFormVO) {
+        String redisVerificationCode = redisValueOperations.get(userRegisterFormVO.getCodeUuid());
+        redisValueOperations.getOperations().delete(userRegisterFormVO.getCodeUuid());
+        if (StringUtils.isEmpty(redisVerificationCode)) {
+            return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
+        }
+        if (redisVerificationCode.equalsIgnoreCase(userRegisterFormVO.getCode())) {
+            return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
+        }
+
+        String registerUsername = userRegisterFormVO.getRegisterUsername();
+        Integer id = userService.getIdByUsername(registerUsername);
+        if (id != null) {
+            return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_NAME_EXISTS);
+        }
+
+        String registerEmail = userRegisterFormVO.getEmail();
+        id = userService.getIdByEmail(registerEmail);
+        if (id != null) {
+            return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+        }
+
+        // 激活邮箱300s后失效
+        String mailUuid = UUID.randomUUID().toString();
+        redisValueOperations.set(mailUuid, userRegisterFormVO.getEmail(), 300L, TimeUnit.SECONDS);
+
+
+        String subject = "枕书席文";
+        String content = "<h1>欢迎使用枕书席文,点击下方链接激活账号</h1>" +
+                "<a href='http://127.0.0.1/api/user/active?mailUuid='"+mailUuid+">激活</a>";
+        mailService.sendHtmlMail(userRegisterFormVO.getEmail(), subject, content);
+
+
+
+        return ResponseDTO.wrap(UserResponseCodeConst.REGISTER_SUCCESS);
     }
 
     /**
@@ -164,11 +203,5 @@ public class LoginService {
 
     private String buildVerificationCodeRedisKey(String uuid) {
         return String.format(VERIFICATION_CODE_REDIS_PREFIX, uuid);
-    }
-
-    public ResponseDTO<ResponseCodeConst> logout() {
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout();
-        return ResponseDTO.wrap(UserResponseCodeConst.LOGOUT_SUCCESS);
     }
 }

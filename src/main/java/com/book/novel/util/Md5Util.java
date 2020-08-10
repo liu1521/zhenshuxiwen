@@ -1,13 +1,13 @@
 package com.book.novel.util;
 
-import org.apache.shiro.crypto.hash.SimpleHash;
+import org.springframework.util.DigestUtils;
 
 /**
  * @Author: liu
  * @Date: 2020/8/7
- * @Description: shrio工具类
+ * @Description: md5工具类
  */
-public class ShrioUtil {
+public class Md5Util {
 
     /**
      * 加盐加密
@@ -17,7 +17,8 @@ public class ShrioUtil {
      * @return
      */
     public static String encryptPassword(Object srcPwd, Object salt) {
-        return new SimpleHash("MD5", srcPwd, salt, 1024).toString();
+        String base = srcPwd + "/" + salt;
+        return DigestUtils.md5DigestAsHex(base.getBytes());
     }
 
 }

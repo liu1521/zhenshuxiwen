@@ -1,7 +1,5 @@
 package com.book.novel.common.kaptcha;
 
-import org.apache.commons.collections.ListUtils;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
