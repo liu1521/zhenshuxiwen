@@ -3,7 +3,7 @@ package com.book.novel.module.user.constant;
 /**
  * @Author: liu
  * @Date: 2020/8/9
- * @Description:
+ * @Description: 用户性别常量
  */
 public enum UserSexEnum {
 

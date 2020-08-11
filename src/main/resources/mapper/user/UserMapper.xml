@@ -25,8 +25,8 @@
 
     <insert id="saveUser">
         insert into
-        user(username,email,password,sex,create_time)
-        values (#{username}, #{email}, #{password}, #{sex}, #{createTime})
+        user(username,email,password,status,sex,create_time)
+        values (#{username}, #{email}, #{password}, #{status}, #{sex}, #{createTime})
     </insert>
 
     <update id="updateUserLoginInfo">
@@ -40,11 +40,11 @@
         u.id=#{id}
     </update>
 
-    <update id="updateStatusToOneById">
+    <update id="updateStatusTo2ById">
         update
         user u
         set
-        u.status=1
+        u.status=2
         where
         u.id=#{id}
     </update>
@@ -95,9 +95,18 @@
         u.username=#{username}
     </select>
 
-    <select id="getUserByEmail" resultType="com.book.novel.module.user.entity.UserEntity">
+    <select id="getIdByEmail" resultType="java.lang.Integer">
         select
         u.id
+        from
+        user u
+        where
+        u.email=#{email}
+    </select>
+
+    <select id="getUserByEmail" resultType="com.book.novel.module.user.entity.UserEntity">
+        select
+        <include refid="all"></include>
         from
         user u
         where

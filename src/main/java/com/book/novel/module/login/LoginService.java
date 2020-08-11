@@ -14,24 +14,25 @@ import com.book.novel.module.user.vo.UserLoginFormVO;
 import com.book.novel.module.user.UserService;
 import com.book.novel.module.user.vo.UserRegisterFormVO;
 import com.book.novel.util.BeanUtil;
+import com.book.novel.util.JsonUtil;
 import com.book.novel.util.Md5Util;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +47,8 @@ import java.util.concurrent.TimeUnit;
 public class LoginService {
 
     private static final String VERIFICATION_CODE_REDIS_PREFIX = "vc_%s";
+
+    public static final String WAIT_ACTIVE_USER_PREFIX = "wait_active";
 
     @Autowired
     private UserService userService;
@@ -140,60 +143,51 @@ public class LoginService {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
 
-        // 检测用户名是否存在
+        // 检测用户名是否存在于db
         String registerUsername = userRegisterFormVO.getUsername();
         Integer id = userService.getIdByUsername(registerUsername);
         if (id != null) {
             return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_NAME_EXISTS);
         }
 
-        // 检测邮箱是否存在
+        // 检测邮箱是否存在于db
         String registerEmail = userRegisterFormVO.getEmail();
-        UserEntity userEntity = userService.getUserByEmail(registerEmail);
-        if (userEntity != null) {
-            // 检测账号是否是待激活状态
-            if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userEntity.getStatus())) {
-                // 待激活状态，待激活状态持续5分钟，5分钟后失效
-                Date createTime = userEntity.getCreateTime();
-                LocalDateTime ct = LocalDateTime.ofInstant(createTime.toInstant(), ZoneId.systemDefault());
-                LocalDateTime now = LocalDateTime.now();
-                Duration duration = Duration.between(ct, now);
-                // 待激活状态未失效，不可重复注册
-                if (duration.toMinutes() < 5) {
-                    return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+        id = userService.getIdByEmail(registerEmail);
+        if (id != null) {
+            return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+        }
+
+        // 检测用户名或邮箱是否存在于待激活用户中
+        Set<String> waitActiveUserKey = redisValueOperations.getOperations().keys(WAIT_ACTIVE_USER_PREFIX);
+        if (CollectionUtils.isNotEmpty(waitActiveUserKey)) {
+            List<String> waitActiveUserString = redisValueOperations.multiGet(waitActiveUserKey);
+            if (CollectionUtils.isNotEmpty(waitActiveUserString)) {
+                for (String json : waitActiveUserString) {
+                    UserRegisterFormVO waitActiveUser = (UserRegisterFormVO) JsonUtil.toObject(json, UserRegisterFormVO.class);
+
+                    if (userRegisterFormVO.getUsername().equals(waitActiveUser.getUsername())) {
+                        return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_NAME_EXISTS);
+                    }
+                    if (userRegisterFormVO.getEmail().equals(waitActiveUser.getEmail())) {
+                        return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
+                    }
                 }
-            } else {
-                // 正常或封禁状态
-                return ResponseDTO.wrap(UserResponseCodeConst.EMAIL_EXISTS);
             }
         }
 
-        // 300s内不激活就失效
+        // 发送激活邮件
         String mailUuid = UUID.randomUUID().toString();
-        redisValueOperations.set(mailUuid, userRegisterFormVO.getEmail(), 300L, TimeUnit.SECONDS);
-
         String subject = "枕书席文";
         String content = "<h1>欢迎使用枕书席文,点击下方链接激活账号</h1>" +
                 "<a href='http://127.0.0.1/api/user/active?mailUuid="+mailUuid+"'>激活</a>";
         mailService.sendHtmlMail(userRegisterFormVO.getEmail(), subject, content);
 
-        UserEntity saveUser = new UserEntity();
-        saveUser.setEmail(userRegisterFormVO.getEmail());
-        saveUser.setUsername(userRegisterFormVO.getUsername());
-        saveUser.setPassword(Md5Util.encryptPassword(userRegisterFormVO.getPassword(), userRegisterFormVO.getUsername()));
-        saveUser.setStatus(UserStatusEnum.NOT_ACTIVE.getValue());
-        saveUser.setCreateTime(new Date());
-
-        // 设置性别
-        if (UserSexEnum.UNKNOWN.getDesc().equals(userRegisterFormVO.getSex())) {
-            saveUser.setSex(UserSexEnum.UNKNOWN.getValue());
-        } else if (UserSexEnum.MALE.getDesc().equals(userRegisterFormVO.getSex())) {
-            saveUser.setSex(UserSexEnum.MALE.getValue());
-        } else if (UserSexEnum.FEMALE.getDesc().equals(userRegisterFormVO.getSex())) {
-            saveUser.setSex(UserSexEnum.FEMALE.getValue());
+        // 将注册用户信息存入redis 过期时间5分钟
+        String json = JsonUtil.toJson(userRegisterFormVO);
+        if (StringUtils.isEmpty(json)) {
+            return ResponseDTO.wrap(UserResponseCodeConst.ERROR_PARAM);
         }
-
-        userService.saveUser(saveUser);
+        redisValueOperations.set(WAIT_ACTIVE_USER_PREFIX+mailUuid, json, 300L, TimeUnit.SECONDS);
 
         return ResponseDTO.wrap(UserResponseCodeConst.REGISTER_SUCCESS);
     }

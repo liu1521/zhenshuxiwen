@@ -1,12 +1,9 @@
 package com.book.novel.module.user;
 
-import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.user.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * @Author: liu
@@ -27,9 +24,11 @@ public interface UserMapper {
 
     Integer getIdByUsername(@Param("username") String username);
 
+    Integer getIdByEmail(@Param("email") String email);
+
     UserEntity getUserByEmail(@Param("email") String email);
 
-    void updateStatusToOneById(Integer id);
+    void updateStatusToOneById(@Param("id") Integer id);
 
     void saveUser(UserEntity saveUser);
 }

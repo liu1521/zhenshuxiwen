@@ -32,6 +32,10 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
 
     private static final String TOKEN_NAME = "x-access-token";
 
+    private static final String SWAGGER_URL = "/swagger";
+
+    private static final String V_THREE = "/v3";
+
     @Autowired
     private LoginTokenService loginTokenService;
 
@@ -56,6 +60,17 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
 
+        //放行swagger
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String target = uri.replaceFirst(contextPath, "");
+        if (target.startsWith(SWAGGER_URL)) {
+            return true;
+        }
+        if (target.startsWith(V_THREE)) {
+            return true;
+        }
+
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
         // 放行不需要登陆的请求
@@ -65,9 +80,7 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
 
         // 获取token
         String headerToken = request.getHeader(TOKEN_NAME);
-        System.out.println(headerToken);
         String requestToken = request.getParameter(TOKEN_NAME);
-        System.out.println(requestToken);
         String xAccessToken = headerToken != null ? headerToken : requestToken;
 
         // 解析token

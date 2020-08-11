@@ -1,8 +1,7 @@
 package com.book.novel.module.login.bo;
 
 import com.book.novel.module.user.bo.UserBO;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
 /**
  * @Author: liu
@@ -10,8 +9,7 @@ import lombok.ToString;
  * @Description: 请求tokenBO
  */
 
-@Getter
-@ToString
+@Data
 public class RequestTokenBO {
 
     private Integer requestUserId;

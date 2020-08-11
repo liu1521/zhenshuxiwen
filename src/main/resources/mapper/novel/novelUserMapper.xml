@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.novel.module.novel.NovelUserMapper">
+
+    <resultMap id="novelDTO" type="com.book.novel.module.novel.dto.NovelDTO">
+        <result property="author" column="username"></result>
+    </resultMap>
+
+    <resultMap id="novelDetailDTO" type="com.book.novel.module.novel.dto.NovelDetailDTO">
+        <result property="author" column="username"></result>
+    </resultMap>
+
+    <sql id="all">
+        n.id,
+        n.category_id,
+        n.title,
+        n.author_id,
+        n.pic,
+        n.introduce,
+        n.tag,
+        n.up,
+        n.down,
+        n.hits,
+        n.rating,
+        n.rating_count,
+        n.serialize,
+        n.favorites,
+        n.create_time,
+        n.update_time,
+        n.status,
+        n.hits_day,
+        n.hits_week,
+        n.hits_month,
+        n.word,
+        n.recommend
+    </sql>
+
+    <select id="listNovelByCategory" resultMap="novelDTO">
+        select
+        u.username,
+        <include refid="all"></include>
+        from
+        novel n
+        left join
+        user u on u.id=n.author_id
+        where
+        n.category_id=#{categoryId}
+        and n.status &lt; 2
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="getNovelCountByKey" resultType="java.lang.Integer">
+        select
+        count(n.id)
+        from
+        novel n
+        left join
+        user u on u.id=n.author_id
+        where
+        n.title like concat('%', #{key}, '%')
+        and n.status &lt; 2
+        or u.username like concat('%', #{key}, '%')
+    </select>
+
+    <select id="listNovelByKey" resultMap="novelDTO">
+        select
+        u.username,
+        <include refid="all"></include>
+        from
+        novel n
+        left join
+        user u on u.id=n.author_id
+        where
+        (
+        n.title like concat('%', #{key}, '%')
+        or u.username like concat('%', #{key}, '%')
+        )
+        and n.status &lt; 2
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="getNovelDetailById" resultMap="novelDetailDTO">
+        select
+        u.username,
+        <include refid="all"></include>
+        from
+        novel n
+        left join
+        user u on u.id=n.author_id
+        where
+        n.id=#{novelId}
+        and n.status &lt; 2
+    </select>
+</mapper>

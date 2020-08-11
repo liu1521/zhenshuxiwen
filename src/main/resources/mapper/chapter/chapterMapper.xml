@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.novel.module.chapter.ChapterMapper">
+
+    <resultMap id="chapterCatalogDTO" type="com.book.novel.module.chapter.dto.ChapterCatalogDTO"></resultMap>
+
+    <sql id="all">
+        ch.id,
+        ch.novel_id,
+        ch.content,
+        ch.status,
+        ch.title,
+        ch.update_time,
+        ch.chapter_number
+    </sql>
+
+    <select id="getChapterCountByNovelId" resultType="java.lang.Integer">
+        select
+        count(ch.id)
+        from
+        chapter ch
+        where
+        ch.novel_id=#{novelId}
+        and ch.status &lt; 2
+    </select>
+
+    <select id="listChapterByNovelId" resultMap="chapterCatalogDTO">
+        select
+        <include refid="all"></include>
+        from
+        chapter ch
+        where
+        ch.novel_id=#{novelId}
+        and ch.status &lt; 2
+        order by ch.chapter_number asc
+        limit #{start}, #{pageSize}
+    </select>
+
+</mapper>

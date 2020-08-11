@@ -3,7 +3,7 @@ package com.book.novel.module.role.constant;
 /**
  * @Author: liu
  * @Date: 2020/8/9
- * @Description:
+ * @Description: 角色信息常量
  */
 
 public enum RoleEnum {

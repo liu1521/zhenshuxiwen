@@ -2,6 +2,7 @@ package com.book.novel.module.role;
 
 import com.book.novel.module.role.entity.RoleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 /**

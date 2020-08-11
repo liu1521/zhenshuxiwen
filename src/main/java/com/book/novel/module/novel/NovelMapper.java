@@ -1,6 +1,7 @@
 package com.book.novel.module.novel;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,4 +12,6 @@ import org.springframework.stereotype.Component;
 @Mapper
 @Component
 public interface NovelMapper {
+
+    int getNovelCountByCategory(@Param("categoryId") Integer categoryId);
 }

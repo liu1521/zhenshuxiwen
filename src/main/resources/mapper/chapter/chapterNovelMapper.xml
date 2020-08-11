@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.novel.module.chapter.ChapterNovelMapper">
+
+    <resultMap id="chapterDetailDTO" type="com.book.novel.module.chapter.dto.ChapterDetailDTO">
+        <result property="novelTitle" column="bookName"/>
+        <result property="author" column="username"/>
+    </resultMap>
+
+    <sql id="all">
+        ch.id,
+        ch.novel_id,
+        ch.content,
+        ch.status,
+        ch.title,
+        ch.update_time,
+        ch.chapter_number
+    </sql>
+
+    <select id="getByChapterId" resultMap="chapterDetailDTO">
+        select
+        n.title as bookName,
+        u.username as username,
+        <include refid="all"></include>
+        from
+        chapter ch
+        left join
+        novel n on ch.novel_id=n.id
+        left join
+        user u on u.id=n.author_id
+        where
+        ch.id=#{chapterId}
+        and ch.status &lt; 2
+    </select>
+
+</mapper>

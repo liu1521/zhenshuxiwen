@@ -21,7 +21,7 @@ import java.util.UUID;
 /**
  * @Author: liu
  * @Date: 2020/8/8
- * @Description:
+ * @Description: TOKEN加密解密
  */
 
 @Slf4j

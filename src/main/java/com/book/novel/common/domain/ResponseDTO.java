@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: liu
  * @Date: 2020/8/7
- * @Description: 响应数据传输对象
+ * @Description: 响应数据传输DTO
  */
 
 @Data

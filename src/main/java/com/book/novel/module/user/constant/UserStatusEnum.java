@@ -3,7 +3,7 @@ package com.book.novel.module.user.constant;
 /**
  * @Author: liu
  * @Date: 2020/8/8
- * @Description:
+ * @Description: 用户状态常量
  */
 
 public enum UserStatusEnum {

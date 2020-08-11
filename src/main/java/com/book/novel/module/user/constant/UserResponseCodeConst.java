@@ -45,9 +45,9 @@ public class UserResponseCodeConst extends ResponseCodeConst {
     public static final UserResponseCodeConst PASSWORD_ERROR = new UserResponseCodeConst(3007, "密码输入有误，请重新输入!");
 
     /**
-     * 邮箱已经注册
+     * 邮箱已被注册
      */
-    public static final UserResponseCodeConst EMAIL_EXISTS = new UserResponseCodeConst(3008, "邮箱已经注册!");
+    public static final UserResponseCodeConst EMAIL_EXISTS = new UserResponseCodeConst(3008, "邮箱已被注册!");
 
     /**
      * 未授权用户

@@ -15,7 +15,7 @@ import java.io.File;
 /**
  * @Author: liu
  * @Date: 2020/8/10
- * @Description:
+ * @Description: 邮件业务
  */
 
 @Service
