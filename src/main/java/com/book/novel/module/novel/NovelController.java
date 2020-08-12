@@ -84,7 +84,7 @@ public class NovelController {
         return novelService.getRank(RedisKeyConstant.RANK_RATING, 10);
     }
 
-    @ApiOperation(value = "获取最受喜爱的10本小说")
+    @ApiOperation(value = "获取最多收藏的10本小说")
     @GetMapping("/api/novel/rank/favorites")
     @NoNeedLogin
     public ResponseDTO<List<NovelDTO>> getRankFavorites() {

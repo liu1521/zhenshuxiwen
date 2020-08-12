@@ -17,4 +17,5 @@ public interface NovelMapper {
 
     void updateHits(@Param("novelId") Integer novelId);
 
+    void updateNovelHitsTo0(@Param("column") String column);
 }

@@ -39,6 +39,23 @@
         n.id=#{novelId}
     </update>
 
+    <update id="updateNovelHitsTo0">
+        update
+        novel n
+        set
+        <choose>
+            <when test="column=='hits_day'">
+                n.hits_day=0
+            </when>
+            <when test="column=='hits_week">
+                n.hits_week=0
+            </when>
+            <when test="column=='hits_month'">
+                n.hits_month=0
+            </when>
+        </choose>
+    </update>
+
     <select id="getNovelCountByCategory" resultType="java.lang.Integer">
         select
         count(n.id)

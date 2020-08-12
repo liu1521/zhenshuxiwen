@@ -88,13 +88,10 @@ public class NovelService {
         List<NovelDTO> result;
         if (CollectionUtils.isEmpty(rankString)) {
             // 缓存中没有rank信息,从db中拉取并缓存
-            result = novelUserMapper.getRank(rank_key, num);
-
+            result = updateNovelRank(rank_key, num);
             if (result == null) {
                 return ResponseDTO.wrap(NovelResponseCodeConstant.RANK_ERROR);
             }
-            result.forEach(novelDTO -> rankString.add(JsonUtil.toJson(novelDTO)));
-            redisValueOperations.getOperations().opsForList().rightPushAll(rank_key, rankString);
         } else {
             // 缓存中有rank信息,将字符串对象转为NovelDTO返回
             result = new ArrayList<>();
@@ -102,5 +99,21 @@ public class NovelService {
         }
 
         return ResponseDTO.succData(result);
+    }
+
+    public void updateNovelHitsTo0(String column) {
+        novelMapper.updateNovelHitsTo0(column);
+    }
+
+    public List<NovelDTO> updateNovelRank(String key, Integer num) {
+        List<NovelDTO> rankNovelDTOList = novelUserMapper.getRank(key, num);
+        if (CollectionUtils.isEmpty(rankNovelDTOList)) {
+            return null;
+        }
+        List<String> rankNovelStringList = new ArrayList<>();
+        rankNovelDTOList.forEach(novelDTO -> rankNovelStringList.add(JsonUtil.toJson(novelDTO)));
+        redisValueOperations.getOperations().delete(key);
+        redisValueOperations.getOperations().opsForList().rightPushAll(key, rankNovelStringList);
+        return rankNovelDTOList;
     }
 }
