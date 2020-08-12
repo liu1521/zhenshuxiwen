@@ -1,6 +1,5 @@
 package com.book.novel.module.login;
 
-import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.module.mail.MailService;
 import com.book.novel.module.role.constant.RoleEnum;
@@ -48,6 +47,10 @@ import java.util.concurrent.TimeUnit;
 public class LoginService {
 
     private static final String VERIFICATION_CODE_REDIS_PREFIX = "vc_%s";
+
+    public static final String WAIT_ACTIVE_USER_PREFIX = "wait_active";
+
+    public static final String ACTIVE_EMAIL_ADDR = "118.31.229.85";
 
     @Autowired
     private UserService userService;
@@ -157,7 +160,7 @@ public class LoginService {
         }
 
         // 检测用户名或邮箱是否存在于待激活用户中
-        Set<String> waitActiveUserKey = redisValueOperations.getOperations().keys(RedisKeyConstant.WAIT_ACTIVE_USER_PREFIX);
+        Set<String> waitActiveUserKey = redisValueOperations.getOperations().keys(WAIT_ACTIVE_USER_PREFIX);
         if (CollectionUtils.isNotEmpty(waitActiveUserKey)) {
             List<String> waitActiveUserString = redisValueOperations.multiGet(waitActiveUserKey);
             if (CollectionUtils.isNotEmpty(waitActiveUserString)) {
@@ -178,7 +181,7 @@ public class LoginService {
         String mailUuid = UUID.randomUUID().toString();
         String subject = "枕书席文";
         String content = "<h1>欢迎使用枕书席文,点击下方链接激活账号</h1>" +
-                "<a href='http://127.0.0.1/api/user/active?mailUuid="+mailUuid+"'>激活</a>";
+                "<a href='http://"+ACTIVE_EMAIL_ADDR+"/api/user/active?mailUuid="+mailUuid+"'>激活</a>";
         mailService.sendHtmlMail(userRegisterFormVO.getEmail(), subject, content);
 
         // 将注册用户信息存入redis 过期时间5分钟
@@ -186,9 +189,9 @@ public class LoginService {
         if (StringUtils.isEmpty(json)) {
             return ResponseDTO.wrap(UserResponseCodeConst.ERROR_PARAM);
         }
-        redisValueOperations.set(RedisKeyConstant.WAIT_ACTIVE_USER_PREFIX+mailUuid, json, 300L, TimeUnit.SECONDS);
+        redisValueOperations.set(WAIT_ACTIVE_USER_PREFIX+mailUuid, json, 300L, TimeUnit.SECONDS);
 
-        return ResponseDTO.succ();
+        return ResponseDTO.wrap(UserResponseCodeConst.REGISTER_SUCCESS);
     }
 
     /**

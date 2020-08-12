@@ -1,5 +1,6 @@
 package com.book.novel.config;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .apis(RequestHandlerSelectors.basePackage("com.book.novel.module"))
+                //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiModelProperty.class))
                 .paths(PathSelectors.any())
                 .build();
     }

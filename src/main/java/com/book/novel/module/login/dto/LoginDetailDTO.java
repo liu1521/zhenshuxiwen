@@ -1,5 +1,6 @@
 package com.book.novel.module.login.dto;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import lombok.Data;
  */
 
 @Data
+@ApiModel(value = "LoginDetailDTO对象")
 public class LoginDetailDTO {
 
     @ApiModelProperty("主键id")

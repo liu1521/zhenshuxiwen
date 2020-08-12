@@ -4,7 +4,6 @@
 
     <resultMap id="loginDetailDTO" type="com.book.novel.module.login.dto.LoginDetailDTO">
     </resultMap>
-
     <sql id="all">
         u.id,
         u.username,

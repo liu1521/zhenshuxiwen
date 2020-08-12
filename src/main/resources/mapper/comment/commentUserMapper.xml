@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.novel.module.comment.CommentMapper">
+    <resultMap id="commentDetailDTO" type="com.book.novel.module.comment.dto.CommentDetailDTO">
+        <result property="username" column="username"></result>
+    </resultMap>
+
+    <select id="listCommentByNovelIdOrderByUp" resultMap="commentDetailDTO">
+        select
+        u.username,c.*
+        from
+        comment c
+        left join
+        user u on u.id = c.user_id
+        where
+        c.status = 1 and c.novel_id = #{novelId}
+        order by c.up desc
+        limit #{start},#{pageSize}
+    </select>
+
+</mapper>
