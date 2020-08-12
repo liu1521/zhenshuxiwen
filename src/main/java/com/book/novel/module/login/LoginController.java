@@ -21,7 +21,7 @@ import javax.validation.Valid;
  * @Description: 登陆相关路由
  */
 
-@Api(tags = "用户登陆相关接口")
+@Api(tags = "用户登陆注册接口")
 @RestController
 public class LoginController {
 

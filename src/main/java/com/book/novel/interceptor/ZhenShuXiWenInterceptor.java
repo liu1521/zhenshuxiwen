@@ -33,7 +33,7 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
 
     private static final String TOKEN_NAME = "x-access-token";
 
-    private static final String SWAGGER_URL = "/swagger";
+    private static final String SWAGGER_URL = "/swagger-ui";
 
     private static final String V_THREE = "/v3";
 

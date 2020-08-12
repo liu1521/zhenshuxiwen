@@ -1,5 +1,6 @@
 package com.book.novel.module.user.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -46,7 +46,7 @@ public class MailService {
         //邮件内容
         message.setText(content);
         //发送邮件
-        mailSender.send(message);
+        //mailSender.send(message);
 
         return true;
     }
@@ -73,7 +73,7 @@ public class MailService {
             //邮件内容，html格式
             messageHelper.setText(content, true);
             //发送
-            mailSender.send(message);
+            //mailSender.send(message);
 
             return true;
         } catch (MessagingException e) {
@@ -101,7 +101,7 @@ public class MailService {
             FileSystemResource file = new FileSystemResource(new File(filePath));
             String fileName = filePath.substring(filePath.lastIndexOf(File.separator));
             helper.addAttachment(fileName, file);
-            mailSender.send(message);
+            //mailSender.send(message);
 
             return true;
         } catch (MessagingException e) {

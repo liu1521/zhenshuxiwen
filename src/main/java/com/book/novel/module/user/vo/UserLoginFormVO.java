@@ -1,5 +1,6 @@
 package com.book.novel.module.user.vo;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
  * @Description: 用户登陆表单VO
  */
 
+@ApiModel(value = "UserLoginFormVO对象")
 @Data
 public class UserLoginFormVO {
 
