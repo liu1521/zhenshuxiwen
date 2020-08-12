@@ -5,6 +5,7 @@ import com.book.novel.common.anno.NeedAdmin;
 import com.book.novel.common.anno.NeedAuthor;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.RequestMethodConstant;
+import com.book.novel.common.constant.SwaggerConstant;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
@@ -32,10 +33,6 @@ import java.io.IOException;
 public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
 
     private static final String TOKEN_NAME = "x-access-token";
-
-    private static final String SWAGGER_URL = "/swagger-ui";
-
-    private static final String V_THREE = "/v3";
 
     @Autowired
     private LoginTokenService loginTokenService;
@@ -65,10 +62,10 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();
         String target = uri.replaceFirst(contextPath, "");
-        if (target.startsWith(SWAGGER_URL)) {
+        if (target.startsWith(SwaggerConstant.SWAGGER_URL)) {
             return true;
         }
-        if (target.startsWith(V_THREE)) {
+        if (target.startsWith(SwaggerConstant.V_THREE)) {
             return true;
         }
 
