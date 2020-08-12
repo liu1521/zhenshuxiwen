@@ -35,7 +35,7 @@ public class LogAspect {
         String classMethod = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
         Object[] args = joinPoint.getArgs();
         RequestLog requestLog = new RequestLog(url,ip,classMethod,args);
-        log.info("Request:{} Cookie:{} ",requestLog,request.getSession().getId());
+        log.info("Request:{} ",requestLog);
     }
 
     @ToString
