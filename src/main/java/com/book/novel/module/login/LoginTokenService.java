@@ -1,15 +1,19 @@
 package com.book.novel.module.login;
 
+import com.book.novel.common.constant.RedisExpireTimeConstant;
+import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.user.bo.UserBO;
 import com.book.novel.module.user.UserService;
 import com.book.novel.module.user.constant.UserStatusEnum;
+import com.book.novel.util.JsonUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +21,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: liu
@@ -29,11 +34,6 @@ import java.util.UUID;
 public class LoginTokenService {
 
     /**
-     * 过期时间一天
-     */
-    private static final int EXPIRE_SECONDS = 1 * 24 * 3600;
-
-    /**
      * jwt加密字段
      */
     private static final String CLAIM_ID_KEY = "id";
@@ -42,6 +42,9 @@ public class LoginTokenService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ValueOperations<String, String> redisValueOperations;
 
     /**
      * 生成JWT
@@ -53,7 +56,7 @@ public class LoginTokenService {
         /**将token设置为jwt格式*/
         String baseToken = UUID.randomUUID().toString();
         LocalDateTime localDateTimeNow = LocalDateTime.now();
-        LocalDateTime localDateTimeExpire = localDateTimeNow.plus(EXPIRE_SECONDS, ChronoUnit.SECONDS);
+        LocalDateTime localDateTimeExpire = localDateTimeNow.plus(RedisExpireTimeConstant.OND_DAY, ChronoUnit.SECONDS);
         Date from = Date.from(localDateTimeNow.atZone(ZoneId.systemDefault()).toInstant());
         Date expire = Date.from(localDateTimeExpire.atZone(ZoneId.systemDefault()).toInstant());
 
@@ -85,9 +88,16 @@ public class LoginTokenService {
             return null;
         }
 
-        UserBO userBO = userService.getUserBOById(userId);
+        // 从redis中获取user信息
+        String userBOJson = redisValueOperations.get(RedisKeyConstant.USER_INFO_PREFIX + userId);
+        UserBO userBO = (UserBO) JsonUtil.toObject(userBOJson, UserBO.class);
         if (userBO == null) {
-            return null;
+            // redis中没有则从db中查出并缓存到redis
+            userBO = userService.getUserBOById(userId);
+            if (userBO == null) {
+                return null;
+            }
+            redisValueOperations.set(RedisKeyConstant.USER_INFO_PREFIX+userId, JsonUtil.toJson(userBO), RedisExpireTimeConstant.OND_DAY, TimeUnit.SECONDS);
         }
 
         if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userBO.getStatus())) {

@@ -1,15 +1,14 @@
 package com.book.novel.module.user;
 
+import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.ResponseDTO;
-import com.book.novel.module.login.LoginService;
 import com.book.novel.module.user.bo.UserBO;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import com.book.novel.module.user.constant.UserSexEnum;
 import com.book.novel.module.user.constant.UserStatusEnum;
 import com.book.novel.module.user.entity.UserEntity;
 import com.book.novel.module.user.vo.UserRegisterFormVO;
-import com.book.novel.util.BeanUtil;
 import com.book.novel.util.JsonUtil;
 import com.book.novel.util.Md5Util;
 import org.apache.commons.lang3.StringUtils;
@@ -72,17 +71,12 @@ public class UserService {
     }
 
     public ResponseDTO<ResponseCodeConst> active(String mailUuid) {
-        String activeMail = redisValueOperations.get(LoginService.WAIT_ACTIVE_USER_PREFIX+mailUuid);
+        String activeMail = redisValueOperations.get(RedisKeyConstant.WAIT_ACTIVE_USER_PREFIX+mailUuid);
         if (StringUtils.isEmpty(activeMail)) {
             return ResponseDTO.wrap(UserResponseCodeConst.ACTIVE_CODE_INVALID);
         }
 
-//        UserEntity userEntity = userMapper.getUserByEmail(activeMail);
-//        if (userEntity == null) {
-//            return ResponseDTO.wrap(UserResponseCodeConst.ACTIVE_CODE_INVALID);
-//        }
-
-        String json = redisValueOperations.get(LoginService.WAIT_ACTIVE_USER_PREFIX + mailUuid);
+        String json = redisValueOperations.get(RedisKeyConstant.WAIT_ACTIVE_USER_PREFIX + mailUuid);
         if (StringUtils.isEmpty(json)) {
             return ResponseDTO.wrap(UserResponseCodeConst.ACTIVE_CODE_INVALID);
         }

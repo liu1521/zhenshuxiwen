@@ -27,6 +27,18 @@
         n.recommend
     </sql>
 
+    <update id="updateHits">
+        update
+        novel n
+        set
+        n.hits=n.hits+1,
+        n.hits_day=n.hits_day+1,
+        n.hits_week=n.hits_week+1,
+        n.hits_month=n.hits_month+1
+        where
+        n.id=#{novelId}
+    </update>
+
     <select id="getNovelCountByCategory" resultType="java.lang.Integer">
         select
         count(n.id)

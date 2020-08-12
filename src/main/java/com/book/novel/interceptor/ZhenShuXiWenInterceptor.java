@@ -11,6 +11,7 @@ import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.role.constant.RoleEnum;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -82,6 +83,11 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
         String headerToken = request.getHeader(TOKEN_NAME);
         String requestToken = request.getParameter(TOKEN_NAME);
         String xAccessToken = headerToken != null ? headerToken : requestToken;
+
+        if (StringUtils.isEmpty(xAccessToken)) {
+            outputResult(response, UserResponseCodeConst.TOKEN_INVALID);
+            return false;
+        }
 
         // 解析token
         RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(xAccessToken);

@@ -14,4 +14,7 @@ import org.springframework.stereotype.Component;
 public interface NovelMapper {
 
     int getNovelCountByCategory(@Param("categoryId") Integer categoryId);
+
+    void updateHits(@Param("novelId") Integer novelId);
+
 }

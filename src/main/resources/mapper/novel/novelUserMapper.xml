@@ -91,4 +91,39 @@
         n.id=#{novelId}
         and n.status &lt; 2
     </select>
+
+    <select id="getRank" resultMap="novelDTO">
+        select
+        u.username,
+        <include refid="all"></include>
+        from
+        novel n
+        left join
+        user u on u.id=n.author_id
+        where n.status &lt; 2
+        <choose>
+            <when test="key=='rank_hits'">
+                order by n.hits desc
+            </when>
+            <when test="key=='rank_hits_day'">
+                order by n.hits_day desc
+            </when>
+            <when test="key=='rank_hits_week'">
+                order by n.hits_week desc
+            </when>
+            <when test="key=='rank_hits_month'">
+                order by n.hits_month desc
+            </when>
+            <when test="key=='rank_rating'">
+                order by n.rating desc
+            </when>
+            <when test="key=='rank_favorites'">
+                order by n.favorites desc
+            </when>
+            <when test="key=='rank_recommend'">
+                order by n.recommend desc
+            </when>
+        </choose>
+        limit #{num}
+    </select>
 </mapper>

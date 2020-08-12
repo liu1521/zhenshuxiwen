@@ -6,6 +6,7 @@ import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.chapter.constant.ChapterResponseCodeConstant;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.dto.ChapterDetailDTO;
+import com.book.novel.module.novel.NovelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class ChapterService {
 
     @Autowired
     private ChapterMapper chapterMapper;
+
+    @Autowired
+    private NovelMapper novelMapper;
 
     @Autowired
     private ChapterNovelMapper chapterNovelMapper;
@@ -53,6 +57,8 @@ public class ChapterService {
 
     public ResponseDTO<ChapterDetailDTO> getByChapterId(Integer chapterId) {
         ChapterDetailDTO chapterDetailDTO = chapterNovelMapper.getByChapterId(chapterId);
+        novelMapper.updateHits(chapterDetailDTO.getNovelId());
+
         return ResponseDTO.succData(chapterDetailDTO);
     }
 }

@@ -3,10 +3,6 @@ package com.book.novel.common.constant;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @Author: liu
  * @Date: 2020/8/7
@@ -22,6 +18,8 @@ public class ResponseCodeConst {
     public static final ResponseCodeConst ERROR_PARAM = new ResponseCodeConst(101, "参数异常！");
 
     public static final ResponseCodeConst SYSTEM_ERROR = new ResponseCodeConst(111, "系统错误");
+
+    public static final ResponseCodeConst SYSTEM_BUSY = new ResponseCodeConst(112, "系统繁忙,请稍后重试");
 
     public static final ResponseCodeConst NOT_EXISTS = new ResponseCodeConst(113, "数据不存在");
 

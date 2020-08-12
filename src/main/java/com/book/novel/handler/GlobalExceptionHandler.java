@@ -5,6 +5,7 @@ import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mail.MailSendException;
 import org.springframework.validation.BindException;
@@ -73,6 +74,12 @@ public class GlobalExceptionHandler {
             return ResponseDTO.wrap(ResponseCodeConst.CONTENT_TYPE_ERROR);
         }
 
+        // 连接超时
+        if (e instanceof QueryTimeoutException) {
+            return ResponseDTO.wrap(ResponseCodeConst.SYSTEM_BUSY);
+        }
+
+        // 发送邮件出错
         if (e instanceof MailSendException) {
             return ResponseDTO.wrap(ResponseCodeConst.MAIL_ERROR);
         }

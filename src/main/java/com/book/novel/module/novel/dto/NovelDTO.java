@@ -2,8 +2,6 @@ package com.book.novel.module.novel.dto;
 
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @Author: liu
  * @Date: 2020/8/10
@@ -24,6 +22,14 @@ public class NovelDTO {
     private String introduce;
 
     private String tag;
+
+    private Integer hits;
+
+    private Integer hitsDay;
+
+    private Integer hitsWeek;
+
+    private Integer hitsMonth;
 
     private Double rating;
 

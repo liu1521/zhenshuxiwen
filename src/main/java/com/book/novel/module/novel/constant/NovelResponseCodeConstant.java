@@ -19,6 +19,11 @@ public class NovelResponseCodeConstant extends ResponseCodeConst {
      */
     public static final NovelResponseCodeConstant NOVEL_CATEGORY_ID_INVALID = new NovelResponseCodeConstant(4002, "小说类型不存在");
 
+    /**
+     * 获取排行榜出错
+     */
+    public static final NovelResponseCodeConstant RANK_ERROR = new NovelResponseCodeConstant(4003, "获取排行榜失败");
+
     public NovelResponseCodeConstant(int code, String msg) {
         super(code, msg);
     }

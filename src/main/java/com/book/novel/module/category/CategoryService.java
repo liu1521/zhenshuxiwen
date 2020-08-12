@@ -1,5 +1,6 @@
 package com.book.novel.module.category;
 
+import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.category.vo.CategoryVO;
 import com.book.novel.util.JsonUtil;
@@ -33,11 +34,11 @@ public class CategoryService {
      */
     public ResponseDTO<List<CategoryVO>> listCategory() {
         ListOperations<String, String> listOperations = redisValueOperations.getOperations().opsForList();
-        List<String> category = listOperations.range("category", 0, -1);
+        List<String> category = listOperations.range(RedisKeyConstant.CATEGORY, 0, -1);
         List<CategoryVO> categoryVOS;
         if (CollectionUtils.isEmpty(category)) {
             categoryVOS = categoryMapper.listCategory();
-            categoryVOS.forEach(cvo -> listOperations.rightPush("category", JsonUtil.toJson(cvo)));
+            categoryVOS.forEach(cvo -> listOperations.rightPush(RedisKeyConstant.CATEGORY, JsonUtil.toJson(cvo)));
         } else {
             categoryVOS = new ArrayList<>();
             category.forEach(json -> categoryVOS.add((CategoryVO) JsonUtil.toObject(json, CategoryVO.class)));
