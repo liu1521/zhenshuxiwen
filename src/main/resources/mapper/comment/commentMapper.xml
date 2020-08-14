@@ -11,4 +11,19 @@
         where
         c.novel_id = #{novelId}
     </select>
+    <select id="getCountByUserId">
+        select count(1) from comment c where c.user_id = #{userId}
+    </select>
+
+    <update id="updateStatusById">
+        update comment set status = #{status} where id = #{id}
+    </update>
+
+    <update id="updateUpById">
+        update comment set up = up + 1 where id = #{id}
+    </update>
+
+    <insert id="">
+        INSERT INTO comment (content,create_time,user_id,novel_id) VALUES(#{content},#{createTime},#{userId},#{novelId})
+    </insert>
 </mapper>

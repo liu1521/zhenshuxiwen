@@ -4,6 +4,9 @@
     <resultMap id="commentDetailDTO" type="com.book.novel.module.comment.dto.CommentDetailDTO">
         <result property="username" column="username"></result>
     </resultMap>
+    <resultMap id="commentUserIdDTO" type="com.book.novel.module.comment.dto.CommentUserIdDTO">
+        <result property="userId" column="user_id"></result>
+    </resultMap>
 
     <select id="listCommentByNovelIdOrderByUp" resultMap="commentDetailDTO">
         select
@@ -14,6 +17,18 @@
         user u on u.id = c.user_id
         where
         c.status = 1 and c.novel_id = #{novelId}
+        order by c.up desc
+        limit #{start},#{pageSize}
+    </select>
+    <select id="listCommentByUserIdOrderByUp" resultMap="commentUserIdDTO">
+        select
+        u.username,c.*
+        from
+        comment c
+        left join
+        user u on u.id = c.user_id
+        where
+        c.status = 1 and c.user_id = #{userId}
         order by c.up desc
         limit #{start},#{pageSize}
     </select>
