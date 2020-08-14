@@ -1,7 +1,6 @@
 package com.book.novel.common.constant;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Author: liu
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @Description: 响应码常量
  */
 
-@Slf4j
 @Data
 public class ResponseCodeConst {
 
@@ -52,4 +50,5 @@ public class ResponseCodeConst {
         this.msg = msg;
         this.success = success;
     }
+
 }

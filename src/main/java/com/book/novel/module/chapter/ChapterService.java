@@ -55,8 +55,8 @@ public class ChapterService {
         return resultDTO;
     }
 
-    public ResponseDTO<ChapterDetailDTO> getByChapterId(Integer chapterId) {
-        ChapterDetailDTO chapterDetailDTO = chapterNovelMapper.getByChapterId(chapterId);
+    public ResponseDTO<ChapterDetailDTO> getChapterDetailByChapterId(Integer chapterId) {
+        ChapterDetailDTO chapterDetailDTO = chapterNovelMapper.getChapterDetailByChapterId(chapterId);
         novelMapper.updateHits(chapterDetailDTO.getNovelId());
 
         return ResponseDTO.succData(chapterDetailDTO);

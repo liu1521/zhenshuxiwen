@@ -48,6 +48,18 @@
         u.id=#{id}
     </update>
 
+    <update id="updateUserInfo">
+        update
+        user u
+        set
+        u.username=#{username},
+        u.sex=#{sex},
+        u.head_img_url=#{headImgUrl},
+        u.introduce=#{introduce},
+        where
+        u.id=#{id}
+    </update>
+
     <select id="getLoginDetailDTO" resultMap="loginDetailDTO">
         select
         <include refid="all"></include>
@@ -110,6 +122,15 @@
         user u
         where
         u.email=#{email}
+    </select>
+
+    <select id="getEmailByUsername" resultType="java.lang.String">
+        select
+        u.email
+        from
+        user u
+        where
+        u.username=#{username}
     </select>
 
 </mapper>

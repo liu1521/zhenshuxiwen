@@ -31,21 +31,19 @@ public class NovelDetailDTO {
 
     private Integer hits;
 
-    private Double rating;
+    private Integer hitsDay;
+
+    private Integer hitsWeek;
+
+    private Integer hitsMonth;
+
+    private Integer rating;
 
     private Integer serialize;
 
     private Integer favorites;
 
     private Date updateTime;
-
-    private Integer status;
-
-    private Integer hitsDay;
-
-    private Integer hitsWeek;
-
-    private Integer hitsMonth;
 
     private Integer word;
 

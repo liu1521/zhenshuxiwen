@@ -74,6 +74,11 @@ public class UserResponseCodeConst extends ResponseCodeConst {
      */
     public static final UserResponseCodeConst ACTIVE_CODE_INVALID = new UserResponseCodeConst(3013, "激活码无效");
 
+    /**
+     * 图片错误
+     */
+    public static final UserResponseCodeConst IMG_FORMAT_ERROR = new UserResponseCodeConst(3014, "非法图片");
+
     public UserResponseCodeConst(int code, String msg) {
         super(code, msg);
     }

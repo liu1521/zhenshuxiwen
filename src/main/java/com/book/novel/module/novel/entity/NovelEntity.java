@@ -62,7 +62,7 @@ public class NovelEntity implements Serializable {
     private Integer hits;
 
     /**
-     * 评分  rating=(rating*ratingCount+curRating)/(ratingCount+1)
+     * 评分  总评分
      */
     private Double rating;
 

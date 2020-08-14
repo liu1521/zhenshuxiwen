@@ -25,7 +25,7 @@ public class CommentEntity {
     private Date createTime;
 
     /**
-     * 用户id
+     * 评论者id
      */
     private Integer userId;
 
@@ -40,7 +40,7 @@ public class CommentEntity {
     private Integer up;
 
     /**
-     * 审核状态  0未审核 1审核通过 2审核未通过
+     * 所属小说id
      */
     private Integer novelId;
 }

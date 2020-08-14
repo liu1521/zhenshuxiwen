@@ -3,7 +3,7 @@ package com.book.novel.common.constant;
 /**
  * @Author: liu
  * @Date: 2020/8/12
- * @Description: redis关键词前缀常量
+ * @Description: redis关键词常量
  */
 
 public interface RedisKeyConstant {

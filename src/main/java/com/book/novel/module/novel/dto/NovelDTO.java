@@ -31,7 +31,7 @@ public class NovelDTO {
 
     private Integer hitsMonth;
 
-    private Double rating;
+    private Integer rating;
 
     private Integer serialize;
 

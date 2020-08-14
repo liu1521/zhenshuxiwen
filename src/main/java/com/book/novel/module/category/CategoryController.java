@@ -25,7 +25,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @ApiOperation(value = "获取小说分类类型")
-    @GetMapping("/category/get")
+    @GetMapping("/api/category/get")
     @NoNeedLogin
     public ResponseDTO<List<CategoryVO>> getCategory() {
         return categoryService.listCategory();

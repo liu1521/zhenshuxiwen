@@ -2,13 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.book.novel.module.novel.NovelUserMapper">
 
-    <resultMap id="novelDTO" type="com.book.novel.module.novel.dto.NovelDTO">
-        <result property="author" column="username"></result>
-    </resultMap>
+    <resultMap id="novelDTO" type="com.book.novel.module.novel.dto.NovelDTO"></resultMap>
 
-    <resultMap id="novelDetailDTO" type="com.book.novel.module.novel.dto.NovelDetailDTO">
-        <result property="author" column="username"></result>
-    </resultMap>
+    <resultMap id="novelDetailDTO" type="com.book.novel.module.novel.dto.NovelDetailDTO"></resultMap>
 
     <sql id="all">
         n.id,
@@ -35,17 +31,42 @@
         n.recommend
     </sql>
 
+    <sql id="novelDTOAll">
+        n.id,
+        n.title,
+        u.username as author,
+        n.pic,
+        n.introduce,
+        n.tag,
+        n.hits,
+        n.hits_day,
+        n.hits_week,
+        n.hits_month,
+        floor(n.rating/n.rating_count) as rating,
+        n.serialize,
+        n.favorites
+    </sql>
+
+    <sql id="novelDetailDTOAll">
+        n.up,
+        n.down,
+        n.update_time,
+        n.word,
+        n.recommend,
+        <include refid="novelDTOAll"></include>
+    </sql>
+
+
     <select id="listNovelByCategory" resultMap="novelDTO">
         select
-        u.username,
-        <include refid="all"></include>
+        <include refid="novelDTOAll"></include>
         from
         novel n
-        left join
-        user u on u.id=n.author_id
+        left join user u on u.id=n.author_id
         where
         n.category_id=#{categoryId}
         and n.status &lt; 2
+        order by update_time desc
         limit #{start},#{pageSize}
     </select>
 
@@ -64,8 +85,7 @@
 
     <select id="listNovelByKey" resultMap="novelDTO">
         select
-        u.username,
-        <include refid="all"></include>
+        <include refid="novelDTOAll"></include>
         from
         novel n
         left join
@@ -76,13 +96,13 @@
         or u.username like concat('%', #{key}, '%')
         )
         and n.status &lt; 2
+        order by update_time desc
         limit #{start},#{pageSize}
     </select>
 
     <select id="getNovelDetailById" resultMap="novelDetailDTO">
         select
-        u.username,
-        <include refid="all"></include>
+        <include refid="novelDetailDTOAll"></include>
         from
         novel n
         left join
@@ -92,10 +112,9 @@
         and n.status &lt; 2
     </select>
 
-    <select id="getRank" resultMap="novelDTO">
+    <select id="listRank" resultMap="novelDTO">
         select
-        u.username,
-        <include refid="all"></include>
+        <include refid="novelDTOAll"></include>
         from
         novel n
         left join
@@ -125,5 +144,14 @@
             </when>
         </choose>
         limit #{num}
+    </select>
+
+    <select id="listFavoritesNovel" resultMap="novelDTO">
+        select
+        <include refid="novelDTOAll"></include>
+        from
+        novel n
+        left join user u1 on n.author_id=u1.id
+        left join user u1
     </select>
 </mapper>

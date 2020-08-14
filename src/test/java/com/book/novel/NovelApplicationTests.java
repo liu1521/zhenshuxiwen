@@ -8,4 +8,8 @@ class NovelApplicationTests {
     @Test
     void contextLoads() {
     }
+
+    @Test
+    public void test() {
+    }
 }

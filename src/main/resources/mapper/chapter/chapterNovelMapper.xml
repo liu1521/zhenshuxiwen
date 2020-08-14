@@ -3,8 +3,8 @@
 <mapper namespace="com.book.novel.module.chapter.ChapterNovelMapper">
 
     <resultMap id="chapterDetailDTO" type="com.book.novel.module.chapter.dto.ChapterDetailDTO">
-        <result property="novelTitle" column="bookName"/>
-        <result property="author" column="username"/>
+<!--        <result property="novelTitle" column="novel_title"/>-->
+<!--        <result property="author" column="username"/>-->
     </resultMap>
 
     <sql id="all">
@@ -17,17 +17,23 @@
         ch.chapter_number
     </sql>
 
-    <select id="getByChapterId" resultMap="chapterDetailDTO">
+    <sql id="detailDTOAll">
+        ch.id,
+        n.title as novel_title,
+        ch.novel_id,
+        u.username as author,
+        ch.content,
+        ch.title,
+        ch.update_time
+    </sql>
+
+    <select id="getChapterDetailByChapterId" resultMap="chapterDetailDTO">
         select
-        n.title as bookName,
-        u.username as username,
-        <include refid="all"></include>
+        <include refid="detailDTOAll"></include>
         from
         chapter ch
-        left join
-        novel n on ch.novel_id=n.id
-        left join
-        user u on u.id=n.author_id
+        left join novel n on ch.novel_id=n.id
+        left join user u on u.id=n.author_id
         where
         ch.id=#{chapterId}
         and ch.status &lt; 2

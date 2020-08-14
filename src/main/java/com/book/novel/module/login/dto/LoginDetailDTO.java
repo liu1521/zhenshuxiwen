@@ -26,8 +26,8 @@ public class LoginDetailDTO {
     @ApiModelProperty("性别")
     private String sex;
 
-    @ApiModelProperty("头像url")
-    private String headImgUrl;
+    @ApiModelProperty("头像base4图片")
+    private String headImg;
 
     @ApiModelProperty("简介")
     private String introduce;

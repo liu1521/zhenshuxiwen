@@ -32,7 +32,7 @@ import java.io.IOException;
 @Component
 public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
 
-    private static final String TOKEN_NAME = "x-access-token";
+    public static final String TOKEN_NAME = "x-access-token";
 
     @Autowired
     private LoginTokenService loginTokenService;
@@ -77,9 +77,7 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
         }
 
         // 获取token
-        String headerToken = request.getHeader(TOKEN_NAME);
-        String requestToken = request.getParameter(TOKEN_NAME);
-        String xAccessToken = headerToken != null ? headerToken : requestToken;
+        String xAccessToken = loginTokenService.getToken(request);
 
         if (StringUtils.isEmpty(xAccessToken)) {
             outputResult(response, UserResponseCodeConst.TOKEN_INVALID);

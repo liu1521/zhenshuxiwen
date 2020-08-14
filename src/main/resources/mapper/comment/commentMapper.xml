@@ -4,6 +4,11 @@
 
 
     <select id="getCountByNovelId" resultType="java.lang.Integer">
-        select count(1) from comment c where c.novel_id = #{novelId}
+        select
+        count(c.id)
+        from
+        comment c
+        where
+        c.novel_id = #{novelId}
     </select>
 </mapper>

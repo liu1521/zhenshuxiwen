@@ -2,6 +2,7 @@ package com.book.novel.module.login;
 
 import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.common.service.ImgFileService;
 import com.book.novel.module.mail.MailService;
 import com.book.novel.module.role.constant.RoleEnum;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
@@ -23,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +51,8 @@ public class LoginService {
 
     private static final String VERIFICATION_CODE_REDIS_PREFIX = "vc_%s";
 
-    public static final String ACTIVE_EMAIL_ADDR = "118.31.229.85";
+    @Value("${spring.mail.active-email-addr}")
+    private String active_email_addr;
 
     @Autowired
     private UserService userService;
@@ -59,6 +62,9 @@ public class LoginService {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private ImgFileService imgFileService;
 
     @Autowired
     private DefaultKaptcha defaultKaptcha;
@@ -71,11 +77,13 @@ public class LoginService {
         if (StringUtils.isEmpty(redisVerificationCodeUuid)) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
-        if (! redisVerificationCodeUuid.equalsIgnoreCase(userLoginFormVO.getCode())) {
+        if (!redisVerificationCodeUuid.equalsIgnoreCase(userLoginFormVO.getCode())) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
 
-        String encryptPassword = Md5Util.encryptPassword(userLoginFormVO.getLoginPwd(), userLoginFormVO.getLoginName());
+        String email = userService.getEmailByUsername(userLoginFormVO.getLoginName());
+
+        String encryptPassword = Md5Util.encryptPassword(userLoginFormVO.getLoginPwd(), email);
 
         UserEntity userEntity = userService.getUserByUsernameAndPassword(userLoginFormVO.getLoginName(), encryptPassword);
         if (userEntity == null) {
@@ -92,45 +100,11 @@ public class LoginService {
 
         String requestIp = request.getRemoteAddr();
         userEntity.setLastLoginIp(requestIp);
-        userEntity.setLoginCount(userEntity.getLoginCount()+1);
+        userEntity.setLoginCount(userEntity.getLoginCount() + 1);
         userEntity.setLastLoginTime(new Date());
         userService.updateUserLoginInfo(userEntity);
 
-
-        LoginDetailDTO loginDetailDTO = BeanUtil.copy(userEntity, LoginDetailDTO.class);
-
-        // 设置性别
-        if (UserSexEnum.UNKNOWN.getValue().equals(userEntity.getSex())) {
-            loginDetailDTO.setSex(UserSexEnum.UNKNOWN.getDesc());
-        } else if (UserSexEnum.MALE.getValue().equals(userEntity.getSex())) {
-            loginDetailDTO.setSex(UserSexEnum.MALE.getDesc());
-        } else if (UserSexEnum.FEMALE.getValue().equals(userEntity.getSex())) {
-            loginDetailDTO.setSex(UserSexEnum.FEMALE.getDesc());
-        }
-
-        // 设置角色
-        if (RoleEnum.USER.getValue().equals(userEntity.getRoleId())) {
-            loginDetailDTO.setRole(RoleEnum.USER.getDesc());
-        } else if (RoleEnum.AUTHOR.getValue().equals(userEntity.getRoleId())) {
-            loginDetailDTO.setRole(RoleEnum.AUTHOR.getDesc());
-        } else if (RoleEnum.ADMIN.getValue().equals(userEntity.getRoleId())) {
-            loginDetailDTO.setRole(RoleEnum.ADMIN.getDesc());
-        }
-
-        // 设置头像url
-//        loginDetailDTO.setHeadImgUrl(FILE_URL_FIX+userEntity.getHeadImgUrl());
-
-        // 设置状态
-        loginDetailDTO.setStatus(UserStatusEnum.NORMAL.getDesc());
-
-        // 设置经验
-        loginDetailDTO.setExp(userEntity.getExp()%30);
-
-        // 设置等级
-        loginDetailDTO.setLevel(userEntity.getExp()/30 + 1);
-
-        String token = loginTokenService.generateToken(loginDetailDTO);
-        loginDetailDTO.setXAccessToken(token);
+        LoginDetailDTO loginDetailDTO = getLoginDetailDTO(userEntity);
 
         return ResponseDTO.succData(loginDetailDTO);
     }
@@ -140,7 +114,7 @@ public class LoginService {
         if (StringUtils.isEmpty(redisVerificationCode)) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
-        if (! redisVerificationCode.equalsIgnoreCase(userRegisterFormVO.getCode())) {
+        if (!redisVerificationCode.equalsIgnoreCase(userRegisterFormVO.getCode())) {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
 
@@ -180,7 +154,7 @@ public class LoginService {
         String mailUuid = UUID.randomUUID().toString();
         String subject = "枕书席文";
         String content = "<h1>欢迎使用枕书席文,点击下方链接激活账号</h1>" +
-                "<a href='http://"+ACTIVE_EMAIL_ADDR+"/api/user/active?mailUuid="+mailUuid+"'>激活</a>";
+                "<a href='http://" + active_email_addr + "/api/user/active?mailUuid=" + mailUuid + "'>激活</a>";
         mailService.sendHtmlMail(userRegisterFormVO.getEmail(), subject, content);
 
         // 将注册用户信息存入redis 过期时间5分钟
@@ -188,7 +162,7 @@ public class LoginService {
         if (StringUtils.isEmpty(json)) {
             return ResponseDTO.wrap(UserResponseCodeConst.ERROR_PARAM);
         }
-        redisValueOperations.set(RedisKeyConstant.WAIT_ACTIVE_USER_PREFIX+mailUuid, json, 300L, TimeUnit.SECONDS);
+        redisValueOperations.set(RedisKeyConstant.WAIT_ACTIVE_USER_PREFIX + mailUuid, json, 300L, TimeUnit.SECONDS);
 
         return ResponseDTO.succMsg(UserResponseCodeConst.REGISTER_SUCCESS.getMsg());
     }
@@ -238,4 +212,42 @@ public class LoginService {
         return verificationCode;
     }
 
+    public LoginDetailDTO getLoginDetailDTO(UserEntity userEntity) {
+        LoginDetailDTO loginDetailDTO = BeanUtil.copy(userEntity, LoginDetailDTO.class);
+
+        // 设置性别
+        if (UserSexEnum.UNKNOWN.getValue().equals(userEntity.getSex())) {
+            loginDetailDTO.setSex(UserSexEnum.UNKNOWN.getDesc());
+        } else if (UserSexEnum.MALE.getValue().equals(userEntity.getSex())) {
+            loginDetailDTO.setSex(UserSexEnum.MALE.getDesc());
+        } else if (UserSexEnum.FEMALE.getValue().equals(userEntity.getSex())) {
+            loginDetailDTO.setSex(UserSexEnum.FEMALE.getDesc());
+        }
+
+        // 设置角色
+        if (RoleEnum.USER.getValue().equals(userEntity.getRoleId())) {
+            loginDetailDTO.setRole(RoleEnum.USER.getDesc());
+        } else if (RoleEnum.AUTHOR.getValue().equals(userEntity.getRoleId())) {
+            loginDetailDTO.setRole(RoleEnum.AUTHOR.getDesc());
+        } else if (RoleEnum.ADMIN.getValue().equals(userEntity.getRoleId())) {
+            loginDetailDTO.setRole(RoleEnum.ADMIN.getDesc());
+        }
+
+        // 设置头像base64图片
+        loginDetailDTO.setHeadImg(imgFileService.getUserHeadImg(userEntity.getHeadImgUrl()));
+
+        // 设置状态
+        loginDetailDTO.setStatus(UserStatusEnum.NORMAL.getDesc());
+
+        // 设置经验
+        loginDetailDTO.setExp(userEntity.getExp() % 30);
+
+        // 设置等级
+        loginDetailDTO.setLevel(userEntity.getExp() / 30 + 1);
+
+        String token = loginTokenService.generateToken(loginDetailDTO);
+        loginDetailDTO.setXAccessToken(token);
+
+        return loginDetailDTO;
+    }
 }

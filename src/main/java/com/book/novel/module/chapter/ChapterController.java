@@ -37,10 +37,10 @@ public class ChapterController {
     }
 
     @ApiOperation(value = "根据章节id获取章节详情")
-    @PostMapping("/api/chapter/getByChapterId")
+    @PostMapping("/api/chapter/getChapterDetailByChapterId")
     @NoNeedLogin
-    public ResponseDTO<ChapterDetailDTO> getByChapterId(@RequestParam Integer chapterId) {
-        return chapterService.getByChapterId(chapterId);
+    public ResponseDTO<ChapterDetailDTO> getChapterDetailByChapterId(@RequestParam Integer chapterId) {
+        return chapterService.getChapterDetailByChapterId(chapterId);
     }
 
 }

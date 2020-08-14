@@ -25,6 +25,7 @@ public interface NovelUserMapper {
 
     NovelDetailDTO getNovelDetailById(@Param("novelId") Integer novelId);
 
-    List<NovelDTO> getRank(@Param("key") String key, @Param("num") Integer num);
+    List<NovelDTO> listRank(@Param("key") String key, @Param("num") Integer num);
 
+    List<NovelDTO> listFavoritesNovel(@Param("userId") Integer requestUserId);
 }

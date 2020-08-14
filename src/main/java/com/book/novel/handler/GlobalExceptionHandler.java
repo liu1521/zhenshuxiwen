@@ -2,7 +2,6 @@ package com.book.novel.handler;
 
 import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.ResponseDTO;
-import com.book.novel.module.user.constant.UserResponseCodeConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.QueryTimeoutException;

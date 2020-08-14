@@ -14,6 +14,13 @@
         ch.chapter_number
     </sql>
 
+    <sql id="catalogDTOAll">
+        ch.id,
+        ch.title,
+        ch.update_time,
+        ch.chapter_number
+    </sql>
+
     <select id="getChapterCountByNovelId" resultType="java.lang.Integer">
         select
         count(ch.id)
@@ -26,7 +33,7 @@
 
     <select id="listChapterByNovelId" resultMap="chapterCatalogDTO">
         select
-        <include refid="all"></include>
+        <include refid="catalogDTOAll"></include>
         from
         chapter ch
         where

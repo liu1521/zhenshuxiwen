@@ -28,7 +28,11 @@ public interface UserMapper {
 
     UserEntity getUserByEmail(@Param("email") String email);
 
-    void updateStatusToOneById(@Param("id") Integer id);
+    void updateStatusTo2ById(@Param("id") Integer id);
 
     void saveUser(UserEntity saveUser);
+
+    String getEmailByUsername(@Param("username") String loginName);
+
+    void updateUserInfo(UserEntity userEntity);
 }

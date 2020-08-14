@@ -1,15 +1,15 @@
 package com.book.novel.module.user.bo;
 
 import com.book.novel.module.user.entity.UserEntity;
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * @Author: liu
  * @Date: 2020/8/8
- * @Description: 用户BO
+ * @Description: 用户登陆信息BO
  */
 
-@Getter
+@Data
 public class UserBO {
 
     /**
@@ -33,9 +33,9 @@ public class UserBO {
     private Integer sex;
 
     /**
-     * 头像url  /开头表示图片在磁盘中
+     * 头像base64图片
      */
-    private String headImgUrl;
+    private String headImg;
 
     /**
      * 简介
@@ -72,7 +72,6 @@ public class UserBO {
        this.username = u.getUsername();
        this.email = u.getEmail();
        this.sex = u.getSex();
-       this.headImgUrl = u.getHeadImgUrl();
        this.introduce = u.getIntroduce();
        this.status = u.getStatus();
        this.exp = u.getExp()%30;

@@ -14,5 +14,5 @@ import org.springframework.stereotype.Component;
 @Mapper
 @Component
 public interface ChapterNovelMapper {
-    ChapterDetailDTO getByChapterId(@Param("chapterId") Integer chapterId);
+    ChapterDetailDTO getChapterDetailByChapterId(@Param("chapterId") Integer chapterId);
 }

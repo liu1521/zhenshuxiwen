@@ -1,5 +1,6 @@
 package com.book.novel.module.novel;
 
+import com.book.novel.common.anno.NeedUser;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.domain.PageParamDTO;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -50,51 +52,51 @@ public class NovelController {
     }
 
     @ApiOperation(value = "获取总点击量前30小说")
-    @GetMapping("/api/novel/rank/hits")
+    @GetMapping("/api/novel/rank/hits/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankHits() {
-        return novelService.getRank(RedisKeyConstant.RANK_HITS, 30);
+    public ResponseDTO<List<NovelDTO>> listRankHits() {
+        return novelService.listRank(RedisKeyConstant.RANK_HITS, 30);
     }
 
     @ApiOperation(value = "获取日点击量前10小说")
-    @GetMapping("/api/novel/rank/day")
+    @GetMapping("/api/novel/rank/day/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankDay() {
-        return novelService.getRank(RedisKeyConstant.RANK_DAY, 10);
+    public ResponseDTO<List<NovelDTO>> listRankDay() {
+        return novelService.listRank(RedisKeyConstant.RANK_DAY, 10);
     }
 
     @ApiOperation(value = "获取周点击量前10小说")
-    @GetMapping("/api/novel/rank/week")
+    @GetMapping("/api/novel/rank/week/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankWeek() {
-        return novelService.getRank(RedisKeyConstant.RANK_WEEK, 10);
+    public ResponseDTO<List<NovelDTO>> listRankWeek() {
+        return novelService.listRank(RedisKeyConstant.RANK_WEEK, 10);
     }
 
     @ApiOperation(value = "获取月点击量前10小说")
-    @GetMapping("/api/novel/rank/month")
+    @GetMapping("/api/novel/rank/month/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankMonth() {
-        return novelService.getRank(RedisKeyConstant.RANK_MONTH, 10);
+    public ResponseDTO<List<NovelDTO>> listRankMonth() {
+        return novelService.listRank(RedisKeyConstant.RANK_MONTH, 10);
     }
 
     @ApiOperation(value = "获取评分前10小说")
-    @GetMapping("/api/novel/rank/rating")
+    @GetMapping("/api/novel/rank/rating/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankRating() {
-        return novelService.getRank(RedisKeyConstant.RANK_RATING, 10);
+    public ResponseDTO<List<NovelDTO>> listRankRating() {
+        return novelService.listRank(RedisKeyConstant.RANK_RATING, 10);
     }
 
     @ApiOperation(value = "获取最多收藏的10本小说")
-    @GetMapping("/api/novel/rank/favorites")
+    @GetMapping("/api/novel/rank/favorites/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankFavorites() {
-        return novelService.getRank(RedisKeyConstant.RANK_FAVORITES, 10);
+    public ResponseDTO<List<NovelDTO>> listRankFavorites() {
+        return novelService.listRank(RedisKeyConstant.RANK_FAVORITES, 10);
     }
 
     @ApiOperation(value = "获取最受推荐的10本小说")
-    @GetMapping("/api/novel/rank/recommend")
+    @GetMapping("/api/novel/rank/recommend/get")
     @NoNeedLogin
-    public ResponseDTO<List<NovelDTO>> getRankRecommend() {
-        return novelService.getRank(RedisKeyConstant.RANK_RECOMMEND, 10);
+    public ResponseDTO<List<NovelDTO>> listRankRecommend() {
+        return novelService.listRank(RedisKeyConstant.RANK_RECOMMEND, 10);
     }
 }

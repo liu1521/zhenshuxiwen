@@ -83,7 +83,7 @@ public class NovelService {
         return ResponseDTO.succData(novelDetailDTO);
     }
 
-    public ResponseDTO<List<NovelDTO>> getRank(String rank_key, Integer num) {
+    public ResponseDTO<List<NovelDTO>> listRank(String rank_key, Integer num) {
         List<String> rankString = redisValueOperations.getOperations().opsForList().range(rank_key, 0, -1);
         List<NovelDTO> result;
         if (CollectionUtils.isEmpty(rankString)) {
@@ -106,7 +106,7 @@ public class NovelService {
     }
 
     public List<NovelDTO> updateNovelRank(String key, Integer num) {
-        List<NovelDTO> rankNovelDTOList = novelUserMapper.getRank(key, num);
+        List<NovelDTO> rankNovelDTOList = novelUserMapper.listRank(key, num);
         if (CollectionUtils.isEmpty(rankNovelDTOList)) {
             return null;
         }

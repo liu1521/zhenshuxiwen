@@ -9,6 +9,7 @@ import java.util.Date;
  * @Date: 2020/8/12
  * @Description:
  */
+
 @Data
 public class CommentDetailDTO {
     /**
@@ -27,14 +28,9 @@ public class CommentDetailDTO {
     private Date createTime;
 
     /**
-     * 用户id
+     * 评论者id
      */
     private String username;
-
-    /**
-     * 审核状态  0未审核 1审核通过 2审核未通过
-     */
-    private Integer status;
 
     /**
      * 顶
@@ -42,7 +38,7 @@ public class CommentDetailDTO {
     private Integer up;
 
     /**
-     * 审核状态  0未审核 1审核通过 2审核未通过
+     * 所属小说id
      */
     private Integer novelId;
 }

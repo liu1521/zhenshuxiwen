@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -39,6 +40,8 @@ public class LoginTokenService {
     private static final String CLAIM_ID_KEY = "id";
 
     private String jwtKey = "jwtKey";
+
+    public static final String TOKEN_NAME = "x-access-token";
 
     @Autowired
     private UserService userService;
@@ -109,6 +112,13 @@ public class LoginTokenService {
         }
 
         return new RequestTokenBO(userBO);
+    }
+
+    public String getToken(HttpServletRequest request) {
+        String headerToken = request.getHeader(TOKEN_NAME);
+        String requestToken = request.getParameter(TOKEN_NAME);
+        String xAccessToken = headerToken != null ? headerToken : requestToken;
+        return xAccessToken;
     }
 
 }
