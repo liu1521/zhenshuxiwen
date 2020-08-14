@@ -37,11 +37,9 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.book.novel.module"))
                 //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiModelProperty.class))
                 .paths(PathSelectors.any())
-                .build()
-                .securitySchemes(Collections.singletonList(
-                        new ApiKey("BASE_TOKEN", "token", "header")));
-
+                .build();
     }
+
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("枕书席文接口文档")

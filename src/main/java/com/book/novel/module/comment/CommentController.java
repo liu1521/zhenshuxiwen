@@ -12,6 +12,8 @@ import com.book.novel.module.comment.vo.CommentCreateVO;
 import com.book.novel.module.comment.vo.CommentStatusVO;
 import com.book.novel.module.comment.vo.CommentUpVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,7 @@ import javax.validation.Valid;
  */
 @Api(tags = "评论相关操作接口")
 @RestController
+@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, dataType = "string", paramType = "header")})
 public class CommentController {
     @Autowired
     private CommentService commentService;
