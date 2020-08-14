@@ -26,7 +26,7 @@ import javax.validation.Valid;
 
 @Api(tags = "小说章节相关接口")
 @RestController
-@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, dataType = "string", paramType = "header")})
+@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, paramType = "header",dataType = "string",dataTypeClass = String.class)})
 public class ChapterController {
 
     @Autowired

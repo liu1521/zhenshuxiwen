@@ -21,7 +21,7 @@ import java.util.List;
 
 @Api(tags = "小说类型相关接口")
 @RestController
-@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, dataType = "string", paramType = "header")})
+@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, paramType = "header",dataType = "string",dataTypeClass = String.class)})
 public class CategoryController {
 
     @Autowired

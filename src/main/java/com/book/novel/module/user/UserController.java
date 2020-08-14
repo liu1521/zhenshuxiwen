@@ -30,7 +30,7 @@ import java.util.List;
 
 @Api(tags = "用户操作相关接口")
 @RestController
-@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, dataType = "string", paramType = "header")})
+@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, paramType = "header",dataType = "string",dataTypeClass = String.class)})
 public class UserController {
 
     @Autowired
