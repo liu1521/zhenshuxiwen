@@ -8,6 +8,8 @@ import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.user.vo.UserInfoVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,7 @@ import java.util.List;
 
 @Api(tags = "用户操作相关接口")
 @RestController
+@ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, paramType = "header",dataType = "string",dataTypeClass = String.class)})
 public class UserController {
 
     @Autowired
