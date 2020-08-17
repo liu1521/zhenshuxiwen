@@ -90,10 +90,6 @@ public class LoginService {
             return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_FAILED);
         }
 
-        if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userEntity.getStatus())) {
-            return ResponseDTO.wrap(UserResponseCodeConst.NO_ACTIVE);
-        }
-
         if (UserStatusEnum.DISABLED.getValue().equals(userEntity.getStatus())) {
             return ResponseDTO.wrap(UserResponseCodeConst.IS_DISABLED);
         }

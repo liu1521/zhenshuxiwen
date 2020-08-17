@@ -9,14 +9,14 @@ package com.book.novel.module.user.constant;
 public enum UserStatusEnum {
 
     /**
-     * 用户未激活 0
+     * 用户正常状态 0
      */
-    NOT_ACTIVE(0, "禁用"),
+    NORMAL(0, "正常"),
 
     /**
-     * 用户正常状态 1
+     * 注册作者等待审核 1
      */
-    NORMAL(1, "正常"),
+    TO_BE_AUTHOR(1, "注册作者等待审核"),
 
     /**
      * 用户已被禁用 2

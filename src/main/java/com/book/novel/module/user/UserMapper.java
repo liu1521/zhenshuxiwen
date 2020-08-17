@@ -28,11 +28,15 @@ public interface UserMapper {
 
     UserEntity getUserByEmail(@Param("email") String email);
 
-    void updateStatusTo2ById(@Param("id") Integer id);
-
     void saveUser(UserEntity saveUser);
 
     String getEmailByUsername(@Param("username") String loginName);
 
     void updateUserInfo(UserEntity userEntity);
+
+    Integer updateStatusById(@Param("status") Integer status, @Param("userId") Integer requestUserId);
+
+    Integer getTicketsById(@Param("userId") Integer requestUserId);
+
+    void updateSubRecommend(@Param("userId") Integer requestUserId);
 }

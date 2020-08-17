@@ -1,6 +1,7 @@
 package com.book.novel.common.domain;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import javax.validation.constraints.Max;
@@ -23,6 +24,9 @@ public class PageParamDTO {
     @ApiModelProperty(value = "每页数量(不能为空)", example = "10")
     @Max(value = 200, message = "每页最大为200")
     protected Integer pageSize;
+
+    @ApiModelProperty(value = "排序方式(默认为按时间排序)", example = "update_time")
+    private String orderKey;
 
     @ApiModelProperty("是否查询总条数")
     protected Boolean searchCount;

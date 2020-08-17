@@ -103,10 +103,6 @@ public class LoginTokenService {
             redisValueOperations.set(RedisKeyConstant.USER_INFO_PREFIX+userId, JsonUtil.toJson(userBO), RedisExpireTimeConstant.OND_DAY, TimeUnit.SECONDS);
         }
 
-        if (UserStatusEnum.NOT_ACTIVE.getValue().equals(userBO.getStatus())) {
-            return null;
-        }
-
         if (UserStatusEnum.DISABLED.getValue().equals(userBO.getStatus())) {
             return null;
         }

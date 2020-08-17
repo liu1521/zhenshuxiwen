@@ -13,9 +13,15 @@ import org.springframework.stereotype.Component;
 @Component
 public interface NovelMapper {
 
-    int getNovelCountByCategory(@Param("categoryId") Integer categoryId);
+    Integer getNovelCountByCategory(@Param("categoryId") Integer categoryId);
 
     void updateHits(@Param("novelId") Integer novelId);
 
     void updateNovelHitsTo0(@Param("column") String column);
+
+    Integer getNovelCount();
+
+    void updateFavorites(@Param("favorites") Integer favorites, @Param("novelId") Integer novelId);
+
+    void updateAddRecommend(@Param("novelId") Integer novelId);
 }

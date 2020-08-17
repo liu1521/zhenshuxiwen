@@ -30,6 +30,13 @@ public class NovelController {
     @Autowired
     private NovelService novelService;
 
+    @ApiOperation(value = "获取全部小说", notes = "默认按更新时间排序")
+    @PostMapping("/api/novel/all/get")
+    @NoNeedLogin
+    public ResponseDTO<PageResultDTO<NovelDTO>> listAllNovel(@Valid @RequestBody PageParamDTO pageParamDTO) {
+        return novelService.listAllNovel(pageParamDTO);
+    }
+
     @ApiOperation(value = "按类型分页查询小说")
     @PostMapping("/api/novel/listByCategory")
     @NoNeedLogin

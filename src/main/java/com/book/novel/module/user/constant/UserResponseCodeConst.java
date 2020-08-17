@@ -79,6 +79,16 @@ public class UserResponseCodeConst extends ResponseCodeConst {
      */
     public static final UserResponseCodeConst IMG_FORMAT_ERROR = new UserResponseCodeConst(3014, "非法图片");
 
+    /**
+     * 已申请成为作家
+     */
+    public static final UserResponseCodeConst APPLIED = new UserResponseCodeConst(3015, "已申请,请等待管理员审核");
+
+    /**
+     * 推荐票不足
+     */
+    public static final UserResponseCodeConst RECOMMEND_ERROR = new UserResponseCodeConst(3016, "推荐票不足");
+
     public UserResponseCodeConst(int code, String msg) {
         super(code, msg);
     }

@@ -10,10 +10,7 @@ import com.book.novel.module.user.vo.UserInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,17 +52,37 @@ public class UserController {
     }
 
     @PostMapping("/api/user/info/update")
-    @ApiOperation(value = "修改个人信息", notes = "修改用户名、性别、头像、简介")
+    @ApiOperation(value = "修改个人信息", notes = "修改用户名、性别、头像、简介,其中头像填 /api/user/headImg/upload返回的url")
     @NeedUser
-    public ResponseDTO<LoginDetailDTO> updateUserInfo(@Valid @RequestParam UserInfoVO userInfoVO) {
+    public ResponseDTO<LoginDetailDTO> updateUserInfo(@Valid @RequestBody UserInfoVO userInfoVO) {
         return userService.updateUserInfo(userInfoVO);
     }
 
     @GetMapping("/api/user/favorites/get")
     @ApiOperation(value = "获取已收藏小说")
     @NeedUser
-    public ResponseDTO<List<NovelDTO>> getFavoritesNovel(HttpServletRequest request) {
-        return userService.getFavoritesNovel(request);
+    public ResponseDTO<List<NovelDTO>> listFavoritesNovel(HttpServletRequest request) {
+        return userService.listFavoritesNovel(request);
     }
 
+    @GetMapping("api/user/author/register")
+    @ApiOperation(value = "注册成为作家，需要等待管理员审核")
+    @NeedUser
+    public ResponseDTO register2author(HttpServletRequest request) {
+        return userService.updateUserStatus2one(request);
+    }
+
+    @ApiOperation(value = "收藏/取消收藏 小说")
+    @PostMapping("/api/user/favorites")
+    @NeedUser
+    public ResponseDTO favorites(@RequestParam Integer novelId, HttpServletRequest request) {
+        return userService.favorites(novelId, request);
+    }
+
+    @ApiOperation(value = "投推荐票(exp+5)")
+    @PostMapping("/api/user/recommend")
+    @NeedUser
+    public ResponseDTO recommend(@RequestParam Integer novelId, HttpServletRequest request) {
+        return userService.recommend(novelId, request);
+    }
 }

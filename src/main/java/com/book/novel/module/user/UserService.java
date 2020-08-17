@@ -8,8 +8,11 @@ import com.book.novel.module.login.LoginService;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.login.dto.LoginDetailDTO;
+import com.book.novel.module.novel.NovelMapper;
 import com.book.novel.module.novel.NovelUserMapper;
+import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
 import com.book.novel.module.novel.dto.NovelDTO;
+import com.book.novel.module.novel.dto.NovelDetailDTO;
 import com.book.novel.module.user.bo.UserBO;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import com.book.novel.module.user.constant.UserSexEnum;
@@ -23,11 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +47,9 @@ public class UserService {
 
     @Autowired
     private NovelUserMapper novelUserMapper;
+
+    @Autowired
+    private NovelMapper novelMapper;
 
     @Autowired
     private LoginService loginService;
@@ -198,7 +203,7 @@ public class UserService {
         return ResponseDTO.succData(fileName);
     }
 
-    public ResponseDTO<List<NovelDTO>> getFavoritesNovel(HttpServletRequest request) {
+    public ResponseDTO<List<NovelDTO>> listFavoritesNovel(HttpServletRequest request) {
         // 从token中拿到用户id
         String token = loginTokenService.getToken(request);
         RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
@@ -207,5 +212,57 @@ public class UserService {
         List<NovelDTO> favoritesNovel = novelUserMapper.listFavoritesNovel(requestTokenBO.getRequestUserId());
 
         return ResponseDTO.succData(favoritesNovel);
+    }
+
+    public ResponseDTO updateUserStatus2one(HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
+        if (requestTokenBO.getUserBO().getStatus() == 1) {
+            ResponseDTO.wrap(UserResponseCodeConst.APPLIED);
+        }
+        if (userMapper.updateStatusById(1, requestTokenBO.getRequestUserId()) < 1) {
+            return ResponseDTO.wrap(UserResponseCodeConst.USER_NOT_EXISTS);
+        }
+        return ResponseDTO.succ();
+    }
+
+    public ResponseDTO favorites(Integer novelId, HttpServletRequest request) {
+        NovelDetailDTO novelDetail = novelUserMapper.getNovelDetailById(novelId);
+        if (novelDetail == null) {
+            return ResponseDTO.wrap(NovelResponseCodeConstant.ERROR_PARAM);
+        }
+
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO userTokenBO = loginTokenService.getUserTokenInfo(token);
+
+        // 尝试删除记录，如果存在记录则为取消收藏，返回取消成功
+        if((novelUserMapper.removeUNFavorites(novelId, userTokenBO.getRequestUserId())) > 0) {
+            novelMapper.updateFavorites(novelDetail.getFavorites() - 1, novelId);
+            return ResponseDTO.succData(NovelResponseCodeConstant.UN_FAVORITES_SUCCESS);
+        }
+
+        novelUserMapper.saveUNFavorites(novelId, userTokenBO.getRequestUserId());
+        novelMapper.updateFavorites(novelDetail.getFavorites() + 1, novelId);
+
+        return ResponseDTO.succData(NovelResponseCodeConstant.FAVORITES_SUCCESS);
+    }
+
+    @Transactional
+    public ResponseDTO recommend(Integer novelId, HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
+
+        Integer recommendUser = userMapper.getTicketsById(requestTokenBO.getRequestUserId());
+        if (recommendUser == null) {
+            return ResponseDTO.wrap(UserResponseCodeConst.TOKEN_INVALID);
+        }
+        if (recommendUser < 1) {
+            return ResponseDTO.wrap(UserResponseCodeConst.RECOMMEND_ERROR);
+        }
+
+        userMapper.updateSubRecommend(requestTokenBO.getRequestUserId());
+        novelMapper.updateAddRecommend(novelId);
+
+        return ResponseDTO.succ();
     }
 }

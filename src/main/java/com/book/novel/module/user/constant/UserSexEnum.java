@@ -20,7 +20,7 @@ public enum UserSexEnum {
     /**
      * 女
      */
-    FEMALE(2, "女性");
+    FEMALE(2, "女");
 
     private Integer value;
 

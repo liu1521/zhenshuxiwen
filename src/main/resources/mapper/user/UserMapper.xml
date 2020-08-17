@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.book.novel.module.user.UserMapper">
 
-    <resultMap id="loginDetailDTO" type="com.book.novel.module.login.dto.LoginDetailDTO"></resultMap>
+    <resultMap id="loginDetailDTO" type="com.book.novel.module.login.dto.LoginDetailDTO"/>
 
     <sql id="all">
         u.id,
@@ -24,8 +24,8 @@
 
     <insert id="saveUser">
         insert into
-        user(username,email,password,status,sex,create_time)
-        values (#{username}, #{email}, #{password}, #{status}, #{sex}, #{createTime})
+        user(username,email,password,sex)
+        values (#{username}, #{email}, #{password}, #{sex})
     </insert>
 
     <update id="updateUserLoginInfo">
@@ -34,18 +34,18 @@
         set
         u.login_count=#{loginCount},
         u.last_login_ip=#{lastLoginIp},
-        u.last_login_time=#{lastLoginTime}
+        u.last_login_time=now()
         where
         u.id=#{id}
     </update>
 
-    <update id="updateStatusTo2ById">
+    <update id="updateStatusById">
         update
         user u
         set
-        u.status=2
+        u.status=#{status}
         where
-        u.id=#{id}
+        u.id=#{userId}
     </update>
 
     <update id="updateUserInfo">
@@ -55,9 +55,19 @@
         u.username=#{username},
         u.sex=#{sex},
         u.head_img_url=#{headImgUrl},
-        u.introduce=#{introduce},
+        u.introduce=#{introduce}
         where
         u.id=#{id}
+    </update>
+
+    <update id="updateSubRecommend">
+        update
+        user u
+        set
+        u.recommend=u.recommend-1
+        u.exp=u.exp+5
+        where
+        u.id=#{userId}
     </update>
 
     <select id="getLoginDetailDTO" resultMap="loginDetailDTO">
@@ -131,6 +141,15 @@
         user u
         where
         u.username=#{username}
+    </select>
+
+    <select id="getTicketsById" resultType="java.lang.Integer">
+        select
+        u.recommend
+        from
+        user u
+        where
+        u.id=#{userId}
     </select>
 
 </mapper>

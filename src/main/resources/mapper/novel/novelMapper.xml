@@ -39,6 +39,15 @@
         n.id=#{novelId}
     </update>
 
+    <update id="updateFavorites">
+        update
+        novel n
+        set
+        n.favorites=#{favorites}
+        where
+        n.id=#{novelId}
+    </update>
+
     <update id="updateNovelHitsTo0">
         update
         novel n
@@ -56,6 +65,15 @@
         </choose>
     </update>
 
+    <update id="updateAddRecommend">
+        update
+        novel n
+        set
+        n.recommend=n.recommend+1
+        where
+        n.id=#{novelId}
+    </update>
+
     <select id="getNovelCountByCategory" resultType="java.lang.Integer">
         select
         count(n.id)
@@ -64,6 +82,13 @@
         where
         n.category_id=#{categoryId}
         and n.status &lt; 2
+    </select>
+
+    <select id="getNovelCount" resultType="java.lang.Integer">
+        select
+        count(n.id)
+        from
+        novel n
     </select>
 
 </mapper>

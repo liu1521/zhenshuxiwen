@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.book.novel.module.novel.NovelUserMapper">
 
-    <resultMap id="novelDTO" type="com.book.novel.module.novel.dto.NovelDTO"></resultMap>
+    <resultMap id="novelDTO" type="com.book.novel.module.novel.dto.NovelDTO"/>
 
-    <resultMap id="novelDetailDTO" type="com.book.novel.module.novel.dto.NovelDetailDTO"></resultMap>
+    <resultMap id="novelDetailDTO" type="com.book.novel.module.novel.dto.NovelDetailDTO"/>
 
     <sql id="all">
         n.id,
@@ -44,19 +44,61 @@
         n.hits_month,
         floor(n.rating/n.rating_count) as rating,
         n.serialize,
+        n.update_time,
+        n.recommend,
         n.favorites
     </sql>
 
     <sql id="novelDetailDTOAll">
         n.up,
         n.down,
-        n.update_time,
         n.word,
-        n.recommend,
         <include refid="novelDTOAll"></include>
     </sql>
+    
+    <sql id="order">
+        <choose>
+            <when test="pageBO.orderKey=='update_time'">
+                order by n.update_time desc
+            </when>
+            <when test="pageBO.orderKey=='hits'">
+                order by n.hits desc
+            </when>
+            <when test="pageBO.orderKey=='rating'">
+                order by n.rating desc
+            </when>
+            <when test="pageBO.orderKey=='hits_day'">
+                order by n.hits_day desc
+            </when>
+            <when test="pageBO.orderKey=='hits_week'">
+                order by n.hits_week desc
+            </when>
+            <when test="pageBO.orderKey=='hits_month'">
+                order by n.hits_month desc
+            </when>
+            <when test="pageBO.orderKey=='favorites'">
+                order by n.favorites desc
+            </when>
+            <when test="pageBO.orderKey=='recommend'">
+                order by n.recommend desc
+            </when>
+        </choose>
+    </sql>
 
+    <insert id="saveUNFavorites">
+        insert into
+        user_novel_favorites(user_id, novel_id)
+        values (#{userId},#{novelId})
+    </insert>
 
+    <delete id="removeUNFavorites">
+        delete from
+        user_novel_favorites
+        where
+        user_id=#{userId}
+        and novel_id=#{novelId}
+    </delete>
+    
     <select id="listNovelByCategory" resultMap="novelDTO">
         select
         <include refid="novelDTOAll"></include>
@@ -66,8 +108,8 @@
         where
         n.category_id=#{categoryId}
         and n.status &lt; 2
-        order by update_time desc
-        limit #{start},#{pageSize}
+        <include refid="order"></include>
+        limit #{pageBO.start},#{pageBO.pageSize}
     </select>
 
     <select id="getNovelCountByKey" resultType="java.lang.Integer">
@@ -96,8 +138,8 @@
         or u.username like concat('%', #{key}, '%')
         )
         and n.status &lt; 2
-        order by update_time desc
-        limit #{start},#{pageSize}
+        <include refid="order"></include>
+        limit #{pageBO.start},#{pageBO.pageSize}
     </select>
 
     <select id="getNovelDetailById" resultMap="novelDetailDTO">
@@ -151,7 +193,23 @@
         <include refid="novelDTOAll"></include>
         from
         novel n
-        left join user u1 on n.author_id=u1.id
-        left join user u1
+        left join user u on n.author_id=u.id
+        left join user_novel_favorites unf on n.id=unf.novel_id
+        left join user u2 on u2.id=unf.user_id
+        where
+        u2.id=#{userId}
+        and n.status &lt; 2
+        order by unf.create_time desc
+    </select>
+
+    <select id="listAllNovel" resultMap="novelDTO">
+        select
+        <include refid="novelDTOAll"></include>
+        from novel n
+        left join user u on n.author_id=u.id
+        where
+        n.status &lt; 2
+        <include refid="order"></include>
+        limit #{pageBO.start},#{pageBO.pageSize}
     </select>
 </mapper>
