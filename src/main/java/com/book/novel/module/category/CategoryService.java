@@ -35,14 +35,14 @@ public class CategoryService {
     public ResponseDTO<List<CategoryVO>> listCategory() {
         ListOperations<String, String> listOperations = redisValueOperations.getOperations().opsForList();
         List<String> category = listOperations.range(RedisKeyConstant.CATEGORY, 0, -1);
-        List<CategoryVO> categoryVOS;
+        List<CategoryVO> categoryVOList;
         if (CollectionUtils.isEmpty(category)) {
-            categoryVOS = categoryMapper.listCategory();
-            categoryVOS.forEach(cvo -> listOperations.rightPush(RedisKeyConstant.CATEGORY, JsonUtil.toJson(cvo)));
+            categoryVOList = categoryMapper.listCategory();
+            categoryVOList.forEach(cvo -> listOperations.rightPush(RedisKeyConstant.CATEGORY, JsonUtil.toJson(cvo)));
         } else {
-            categoryVOS = new ArrayList<>();
-            category.forEach(json -> categoryVOS.add((CategoryVO) JsonUtil.toObject(json, CategoryVO.class)));
+            categoryVOList = new ArrayList<>();
+            category.forEach(json -> categoryVOList.add((CategoryVO) JsonUtil.toObject(json, CategoryVO.class)));
         }
-        return ResponseDTO.succData(categoryVOS);
+        return ResponseDTO.succData(categoryVOList);
     }
 }

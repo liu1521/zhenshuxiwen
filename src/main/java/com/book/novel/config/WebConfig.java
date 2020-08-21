@@ -2,7 +2,6 @@ package com.book.novel.config;
 
 import com.book.novel.interceptor.ZhenShuXiWenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

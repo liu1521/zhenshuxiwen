@@ -1,22 +1,32 @@
 package com.book.novel.module.novel;
 
+import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.common.service.ImgFileService;
+import com.book.novel.module.chapter.ChapterMapper;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.novel.bo.PageBO;
 import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.novel.dto.NovelDetailDTO;
+import com.book.novel.module.novel.entity.NovelEntity;
+import com.book.novel.module.novel.vo.NovelCreateVO;
+import com.book.novel.module.novel.vo.NovelInfoVO;
+import com.book.novel.module.user.constant.UserResponseCodeConst;
+import com.book.novel.util.BeanUtil;
 import com.book.novel.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -42,6 +52,9 @@ public class NovelService {
 
     @Autowired
     private LoginTokenService loginTokenService;
+
+    @Autowired
+    private ChapterMapper chapterMapper;
 
     @Autowired
     private ValueOperations<String, String> redisValueOperations;
@@ -165,5 +178,73 @@ public class NovelService {
         this.setBase64Pic(novels);
         resultDTO.setList(novels);
         return ResponseDTO.succData(resultDTO);
+    }
+
+    public ResponseDTO<List<NovelDetailDTO>> listNovelDetailDTOByAuthor(HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
+        List<NovelDetailDTO> novelDetailDTOList = novelUserMapper.listNovelDetailDTOByAuthorId(requestTokenBO.getRequestUserId());
+        return ResponseDTO.succData(novelDetailDTOList);
+    }
+
+    public ResponseDTO saveNovel(NovelCreateVO novelCreateVO, HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
+
+        NovelEntity novelEntity = BeanUtil.copy(novelCreateVO, NovelEntity.class);
+        novelEntity.setAuthorId(10090);
+
+        try{
+            novelMapper.saveNovel(novelEntity);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseDTO.wrap(NovelResponseCodeConstant.ERROR_PARAM);
+        }
+
+        return ResponseDTO.succ();
+    }
+
+    public ResponseDTO uploadNovelCover(MultipartFile multipartFile) {
+        String fileName = imgFileService.saveNovelCoverImg(multipartFile);
+        if (StringUtils.isEmpty(fileName)) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+        }
+
+        return ResponseDTO.succData(fileName);
+    }
+
+    public ResponseDTO updateNovelInfo(NovelInfoVO novelInfoVO, HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
+        if (! requestTokenBO.getRequestUserId().equals(novelInfoVO.getUserId())) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+        }
+
+        if (StringUtils.isEmpty(novelInfoVO.getPic())) {
+            novelInfoVO.setPic("default.jpg");
+        }
+        Integer ret;
+        try {
+            ret = novelMapper.updateNovelById(novelInfoVO);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+        }
+        if (ret == 0) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+        }
+        return ResponseDTO.succ();
+    }
+
+    public ResponseDTO deleteNovelByNovelId(Integer novelId, HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
+
+        Integer authorId = novelMapper.getAuthorIdByNovelId(novelId);
+        if (! requestTokenBO.getRequestUserId().equals(authorId)) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+        }
+
+        chapterMapper.deleteChapterByNovelId(novelId);
+        novelMapper.deleteNovelByNovelId(novelId);
+        return ResponseDTO.succ();
     }
 }

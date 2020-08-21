@@ -88,4 +88,6 @@ public class UserController {
     public ResponseDTO recommend(@RequestParam Integer novelId, HttpServletRequest request) {
         return userService.recommend(novelId, request);
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.book.novel.common.service;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,6 +76,16 @@ public class ImgFileService {
     }
 
     private String saveImg(MultipartFile multipartFile, String dir) {
+        if (multipartFile.isEmpty() || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
+            return null;
+        }
+
+        String contentType = multipartFile.getContentType();
+        List<String> imageFormat = getImageFormat();
+        if (! imageFormat.contains(contentType)) {
+            return null;
+        }
+
         File file = new File(dir);
         if (!file.exists()) {
             file.mkdirs();

@@ -1,5 +1,7 @@
 package com.book.novel.module.chapter.entity;
 
+import lombok.Data;
+
 import java.util.Date;
 
 /**
@@ -7,6 +9,8 @@ import java.util.Date;
  * @Date: 2020/8/7
  * @Description:
  */
+
+@Data
 public class ChapterEntity {
 
     /**

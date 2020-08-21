@@ -2,8 +2,6 @@ package com.book.novel.module.comment;
 
 import com.book.novel.module.comment.dto.CommentDetailDTO;
 import com.book.novel.module.comment.dto.CommentUserIdDTO;
-import com.book.novel.module.comment.entity.CommentEntity;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;

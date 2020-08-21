@@ -3,7 +3,6 @@ package com.book.novel.module.comment.vo;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 /**
  * @Author: ljs

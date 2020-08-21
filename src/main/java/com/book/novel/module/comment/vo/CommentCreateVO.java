@@ -1,7 +1,6 @@
 package com.book.novel.module.comment.vo;
 
 import lombok.Data;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;

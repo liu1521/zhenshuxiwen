@@ -1,6 +1,6 @@
 package com.book.novel.module.novel;
 
-import com.book.novel.common.anno.NeedUser;
+import com.book.novel.common.anno.NeedAuthor;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.domain.PageParamDTO;
@@ -8,12 +8,15 @@ import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.novel.dto.NovelDetailDTO;
+import com.book.novel.module.novel.vo.NovelCreateVO;
+import com.book.novel.module.novel.vo.NovelInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -108,5 +111,40 @@ public class NovelController {
     @NoNeedLogin
     public ResponseDTO<List<NovelDTO>> listRankRecommend() {
         return novelService.listRank(RedisKeyConstant.RANK_RECOMMEND, 10);
+    }
+
+    @ApiOperation(value = "获取自己写的所有小说")
+    @GetMapping("/api/novel/author/get")
+    @NeedAuthor
+    public ResponseDTO<List<NovelDetailDTO>> listNovelByAuthor(HttpServletRequest request) {
+        return novelService.listNovelDetailDTOByAuthor(request);
+    }
+
+    @ApiOperation(value = "创建小说")
+    @PostMapping("/api/novel/author/create")
+    @NeedAuthor
+    public ResponseDTO createNovel(@Valid @RequestBody NovelCreateVO novelCreateVO, HttpServletRequest request) {
+        return novelService.saveNovel(novelCreateVO, request);
+    }
+
+    @ApiOperation(value = "上传小说封面")
+    @PostMapping("/api/novel/cover/upload")
+    @NeedAuthor
+    public ResponseDTO uploadNovelCover(MultipartFile multipartFile) {
+        return novelService.uploadNovelCover(multipartFile);
+    }
+
+    @ApiOperation(value = "修改小说信息")
+    @PostMapping("/api/novel/update")
+    @NeedAuthor
+    public ResponseDTO updateNovelInfo(@Valid @RequestBody NovelInfoVO novelInfoVO, HttpServletRequest request) {
+        return novelService.updateNovelInfo(novelInfoVO, request);
+    }
+
+    @ApiOperation(value = "删除小说")
+    @PostMapping("/api/novel/delete")
+    @NeedAuthor
+    public ResponseDTO deleteNovelByNovelId(@RequestParam Integer novelId, HttpServletRequest request) {
+        return novelService.deleteNovelByNovelId(novelId, request);
     }
 }

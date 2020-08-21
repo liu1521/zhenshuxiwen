@@ -53,6 +53,7 @@
         n.up,
         n.down,
         n.word,
+        n.status,
         <include refid="novelDTOAll"></include>
     </sql>
     
@@ -205,11 +206,22 @@
     <select id="listAllNovel" resultMap="novelDTO">
         select
         <include refid="novelDTOAll"></include>
-        from novel n
+        from
+        novel n
         left join user u on n.author_id=u.id
         where
         n.status &lt; 2
         <include refid="order"></include>
         limit #{pageBO.start},#{pageBO.pageSize}
+    </select>
+
+    <select id="listNovelDetailDTOByAuthorId" resultMap="novelDetailDTO">
+        select
+        <include refid="novelDetailDTOAll"></include>
+        from
+        novel n
+        left join user u on u.id=n.author_id
+        where
+        author_id=#{authorId}
     </select>
 </mapper>

@@ -28,7 +28,7 @@ public interface UserMapper {
 
     UserEntity getUserByEmail(@Param("email") String email);
 
-    void saveUser(UserEntity saveUser);
+    void saveUser(UserEntity userEntity);
 
     String getEmailByUsername(@Param("username") String loginName);
 

@@ -21,6 +21,19 @@
         ch.chapter_number
     </sql>
 
+    <insert id="saveChapter">
+        insert into
+        chapter(novel_id,content,title,chapter_number)
+        values(#{novelId}, #{content}, #{title}, #{chapterNumber})
+    </insert>
+
+    <delete id="deleteChapterByNovelId">
+        delete from
+        chapter ch
+        where
+        ch.novel_id=#{novelId}
+    </delete>
+
     <select id="getChapterCountByNovelId" resultType="java.lang.Integer">
         select
         count(ch.id)
@@ -29,6 +42,15 @@
         where
         ch.novel_id=#{novelId}
         and ch.status &lt; 2
+    </select>
+
+    <select id="getChapterNumByNovelId" resultType="java.lang.Integer">
+        select
+        max(ch.chapter_number)
+        from
+        chapter ch
+        where
+        ch.novel_id=#{novelId}
     </select>
 
     <select id="listChapterByNovelId" resultMap="chapterCatalogDTO">
@@ -42,5 +64,6 @@
         order by ch.chapter_number asc
         limit #{start}, #{pageSize}
     </select>
+
 
 </mapper>

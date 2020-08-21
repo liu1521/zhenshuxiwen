@@ -1,6 +1,7 @@
 package com.book.novel.module.novel;
 
 import com.book.novel.common.domain.PageParamDTO;
+import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.novel.bo.PageBO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.novel.dto.NovelDetailDTO;
@@ -36,4 +37,7 @@ public interface NovelUserMapper {
     void saveUNFavorites(@Param("novelId") Integer novelId, @Param("userId") Integer requestUserId);
 
     Integer removeUNFavorites(@Param("novelId") Integer novelId, @Param("userId") Integer requestUserId);
+
+    List<NovelDetailDTO> listNovelDetailDTOByAuthorId(@Param("authorId") Integer requestUserId);
+
 }

@@ -1,6 +1,5 @@
 package com.book.novel.module.chapter.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;

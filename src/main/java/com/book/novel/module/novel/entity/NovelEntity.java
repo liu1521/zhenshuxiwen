@@ -1,5 +1,7 @@
 package com.book.novel.module.novel.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,6 +10,8 @@ import java.util.Date;
  * @Date: 2020/8/7
  * @Description: 小说实体类
  */
+
+@Data
 public class NovelEntity implements Serializable {
 
     /**

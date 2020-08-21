@@ -9,13 +9,10 @@ import com.book.novel.module.comment.dto.CommentUserIdDTO;
 import com.book.novel.module.comment.vo.CommentCreateVO;
 import com.book.novel.module.comment.vo.CommentStatusVO;
 import com.book.novel.module.comment.vo.CommentUpVO;
-import com.book.novel.module.novel.dto.NovelDTO;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Author: liu

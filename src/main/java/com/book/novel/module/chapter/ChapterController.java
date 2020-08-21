@@ -1,11 +1,13 @@
 package com.book.novel.module.chapter;
 
+import com.book.novel.common.anno.NeedAuthor;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.dto.ChapterDetailDTO;
+import com.book.novel.module.chapter.vo.ChapterUploadVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -46,4 +49,10 @@ public class ChapterController {
         return chapterService.getChapterDetailByChapterId(chapterId);
     }
 
+    @ApiOperation(value = "上传章节")
+    @PostMapping("/api/chapter/upload")
+    @NeedAuthor
+    public ResponseDTO uploadChapter(@Valid @RequestBody ChapterUploadVO chapterUploadVO, HttpServletRequest request) {
+        return chapterService.saveChapter(chapterUploadVO, request);
+    }
 }

@@ -1,7 +1,6 @@
 package com.book.novel.common.domain;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import javax.validation.constraints.Max;

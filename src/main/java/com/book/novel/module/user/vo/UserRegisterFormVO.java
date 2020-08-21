@@ -3,6 +3,7 @@ package com.book.novel.module.user.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -23,7 +24,7 @@ public class UserRegisterFormVO implements Serializable {
     @ApiModelProperty(example = "123456")
     private String password;
 
-    @NotNull(message = "邮箱不能为空")
+    @Email(message = "邮箱格式错误")
     @ApiModelProperty(example = "1111@qq.com")
     private String email;
 

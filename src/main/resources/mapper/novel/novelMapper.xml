@@ -27,6 +27,39 @@
         n.recommend
     </sql>
 
+    <insert id="saveNovel">
+        insert into
+        novel(
+        title,
+        author_id,
+        <if test="pic!=null">
+            pic,
+        </if>
+        <if test="introduce!=null">
+            introduce,
+        </if>
+        category_id
+        )
+        values(
+        #{title},
+        #{authorId},
+        <if test="pic!=null">
+            #{pic},
+        </if>
+        <if test="introduce!=null">
+            #{introduce},
+        </if>
+        #{categoryId}
+        )
+    </insert>
+
+    <delete id="deleteNovelByNovelId">
+        delete from
+        novel n
+        where
+        n.id=#{novelId}
+    </delete>
+
     <update id="updateHits">
         update
         novel n
@@ -56,7 +89,7 @@
             <when test="column=='hits_day'">
                 n.hits_day=0
             </when>
-            <when test="column=='hits_week">
+            <when test="column=='hits_week'">
                 n.hits_week=0
             </when>
             <when test="column=='hits_month'">
@@ -74,6 +107,25 @@
         n.id=#{novelId}
     </update>
 
+    <update id="updateNovelById">
+        update
+        novel n
+        set
+        <if test="categoryId!=null">
+            n.category_id=#{categoryId},
+        </if>
+        <if test="introduce!=null">
+            n.introduce=#{introduce},
+        </if>
+        <if test="title!=null">
+            n.title=#{title},
+        </if>
+        n.pic=#{pic}
+        where
+        n.id=#{novelId}
+        and n.author_id=#{userId}
+    </update>
+
     <select id="getNovelCountByCategory" resultType="java.lang.Integer">
         select
         count(n.id)
@@ -89,6 +141,15 @@
         count(n.id)
         from
         novel n
+    </select>
+
+    <select id="getAuthorIdByNovelId" resultType="java.lang.Integer">
+        select
+        n.author_id
+        from
+        novel n
+        where
+        n.novel_id=#{novelId}
     </select>
 
 </mapper>

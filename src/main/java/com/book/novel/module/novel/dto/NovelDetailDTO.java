@@ -1,6 +1,5 @@
 package com.book.novel.module.novel.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -49,5 +48,7 @@ public class NovelDetailDTO {
     private Integer word;
 
     private Integer recommend;
+
+    private Integer status;
 
 }

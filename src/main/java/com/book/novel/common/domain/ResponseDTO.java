@@ -1,9 +1,7 @@
 package com.book.novel.common.domain;
 
 import com.book.novel.common.constant.ResponseCodeConst;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @Author: liu

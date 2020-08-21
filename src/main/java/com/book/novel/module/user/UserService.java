@@ -185,19 +185,9 @@ public class UserService {
     }
 
     public ResponseDTO uploadHeadImg(MultipartFile multipartFile) {
-        if (multipartFile.isEmpty() || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
-            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
-        }
-
-        String contentType = multipartFile.getContentType();
-        List<String> imageFormat = imgFileService.getImageFormat();
-        if (! imageFormat.contains(contentType)) {
-            return ResponseDTO.wrap(UserResponseCodeConst.IMG_FORMAT_ERROR);
-        }
-
         String fileName = imgFileService.saveUserHeadImg(multipartFile);
         if (StringUtils.isEmpty(fileName)) {
-            return ResponseDTO.wrap(UserResponseCodeConst.SYSTEM_BUSY);
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
         }
 
         return ResponseDTO.succData(fileName);
