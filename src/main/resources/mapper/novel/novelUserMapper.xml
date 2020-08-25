@@ -33,6 +33,7 @@
 
     <sql id="novelDTOAll">
         n.id,
+        ca.category_name,
         n.title,
         u.username as author,
         n.pic,
@@ -106,6 +107,7 @@
         from
         novel n
         left join user u on u.id=n.author_id
+        left join category ca on ca.id=n.category_id
         where
         n.category_id=#{categoryId}
         and n.status &lt; 2
@@ -118,8 +120,7 @@
         count(n.id)
         from
         novel n
-        left join
-        user u on u.id=n.author_id
+        left join user u on u.id=n.author_id
         where
         n.title like concat('%', #{key}, '%')
         and n.status &lt; 2
@@ -131,8 +132,8 @@
         <include refid="novelDTOAll"></include>
         from
         novel n
-        left join
-        user u on u.id=n.author_id
+        left join user u on u.id=n.author_id
+        left join category ca on ca.id=n.category_id
         where
         (
         n.title like concat('%', #{key}, '%')
@@ -148,8 +149,8 @@
         <include refid="novelDetailDTOAll"></include>
         from
         novel n
-        left join
-        user u on u.id=n.author_id
+        left join user u on u.id=n.author_id
+        left join category ca on ca.id=n.category_id
         where
         n.id=#{novelId}
         and n.status &lt; 2
@@ -160,8 +161,8 @@
         <include refid="novelDTOAll"></include>
         from
         novel n
-        left join
-        user u on u.id=n.author_id
+        left join user u on u.id=n.author_id
+        left join category ca on ca.id=n.category_id
         where n.status &lt; 2
         <choose>
             <when test="key=='rank_hits'">
@@ -197,6 +198,7 @@
         left join user u on n.author_id=u.id
         left join user_novel_favorites unf on n.id=unf.novel_id
         left join user u2 on u2.id=unf.user_id
+        left join category ca on ca.id=n.category_id
         where
         u2.id=#{userId}
         and n.status &lt; 2
@@ -209,6 +211,7 @@
         from
         novel n
         left join user u on n.author_id=u.id
+        left join category ca on ca.id=n.category_id
         where
         n.status &lt; 2
         <include refid="order"></include>
@@ -221,6 +224,7 @@
         from
         novel n
         left join user u on u.id=n.author_id
+        left join category ca on ca.id=n.category_id
         where
         author_id=#{authorId}
     </select>

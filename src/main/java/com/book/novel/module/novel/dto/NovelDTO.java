@@ -15,6 +15,8 @@ public class NovelDTO {
 
     private String title;
 
+    private String categoryName;
+
     private String author;
 
     private String pic;

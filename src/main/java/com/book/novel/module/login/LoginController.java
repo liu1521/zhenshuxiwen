@@ -31,25 +31,25 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @PostMapping("/api/login")
     @ApiOperation(value = "登陆", notes = "登陆")
+    @PostMapping("/api/login")
     @NoNeedLogin
     public ResponseDTO<LoginDetailDTO> login(@Valid @RequestBody UserLoginFormVO userLoginFormVO, HttpServletRequest request) {
         return loginService.login(userLoginFormVO, request);
     }
 
-    @GetMapping("/api/verificationCode")
-    @ApiOperation(value = "获取验证码", notes = "获取验证码")
-    @NoNeedLogin
-    public ResponseDTO<KaptchaDTO> verificationCode() {
-        return loginService.verificationCode();
-    }
-
-    @PostMapping("/api/register")
     @ApiOperation(value = "注册", notes = "注册账号")
+    @PostMapping("/api/register")
     @NoNeedLogin
     public ResponseDTO<ResponseCodeConst> register(@Valid @RequestBody UserRegisterFormVO userRegisterFormVO) {
         return loginService.register(userRegisterFormVO);
+    }
+
+    @ApiOperation(value = "获取验证码", notes = "获取验证码")
+    @GetMapping("/api/verificationCode")
+    @NoNeedLogin
+    public ResponseDTO<KaptchaDTO> verificationCode() {
+        return loginService.verificationCode();
     }
 
 }

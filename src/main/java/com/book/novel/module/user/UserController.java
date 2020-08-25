@@ -33,46 +33,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/api/user/username/test")
     @ApiOperation(value = "验证用户名", notes = "验证用户名是否重复")
+    @PostMapping("/api/user/username/test")
     @NoNeedLogin
     public ResponseDTO<ResponseCodeConst> testUsername(@RequestParam String username) {
         return userService.testUsername(username);
     }
 
-    @GetMapping("/api/user/active")
-    @ApiOperation(value = "激活账号", notes = "激活链接5分钟内有效")
-    @NoNeedLogin
-    public ResponseDTO<ResponseCodeConst> active(@RequestParam String mailUuid) {
-        return userService.active(mailUuid);
-    }
-
-    @PostMapping("/api/user/headImg/upload")
     @ApiOperation(value = "上传头像", notes = "图片格式.jpg .jpeg .png;修改个人信息提交的时候先上传头像拿到返回头像url,将头像url写入个人信息的一个input标签,并将所有的个人信息传到服务器")
+    @PostMapping("/api/user/headImg/upload")
     @NeedUser
     public ResponseDTO uploadHeadImg(@RequestParam MultipartFile multipartFile) {
         return userService.uploadHeadImg(multipartFile);
     }
 
-    @PostMapping("/api/user/info/update")
     @ApiOperation(value = "修改个人信息", notes = "修改用户名、性别、头像、简介,其中头像填 /api/user/headImg/upload返回的url")
+    @PostMapping("/api/user/info/update")
     @NeedUser
     public ResponseDTO<LoginDetailDTO> updateUserInfo(@Valid @RequestBody UserInfoVO userInfoVO) {
         return userService.updateUserInfo(userInfoVO);
-    }
-
-    @GetMapping("/api/user/favorites/get")
-    @ApiOperation(value = "获取已收藏小说")
-    @NeedUser
-    public ResponseDTO<List<NovelDTO>> listFavoritesNovel(HttpServletRequest request) {
-        return userService.listFavoritesNovel(request);
-    }
-
-    @GetMapping("api/user/author/register")
-    @ApiOperation(value = "注册成为作家，需要等待管理员审核")
-    @NeedUser
-    public ResponseDTO register2author(HttpServletRequest request) {
-        return userService.updateUserStatus2one(request);
     }
 
     @ApiOperation(value = "收藏/取消收藏 小说")
@@ -87,6 +66,27 @@ public class UserController {
     @NeedUser
     public ResponseDTO recommend(@RequestParam Integer novelId, HttpServletRequest request) {
         return userService.recommend(novelId, request);
+    }
+
+    @ApiOperation(value = "获取已收藏小说")
+    @GetMapping("/api/user/favorites/get")
+    @NeedUser
+    public ResponseDTO<List<NovelDTO>> listFavoritesNovel(HttpServletRequest request) {
+        return userService.listFavoritesNovel(request);
+    }
+
+    @ApiOperation(value = "注册成为作家，需要等待管理员审核")
+    @GetMapping("api/user/author/register")
+    @NeedUser
+    public ResponseDTO register2author(HttpServletRequest request) {
+        return userService.updateUserStatus2one(request);
+    }
+
+    @ApiOperation(value = "激活账号", notes = "激活链接5分钟内有效")
+    @GetMapping("/api/user/active")
+    @NoNeedLogin
+    public ResponseDTO<ResponseCodeConst> active(@RequestParam String mailUuid) {
+        return userService.active(mailUuid);
     }
 
 

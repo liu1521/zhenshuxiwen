@@ -25,10 +25,12 @@ import javax.validation.Valid;
  * @Date: 2020/8/7
  * @Description: 评论相关路由
  */
+
 @Api(tags = "评论相关操作接口")
 @RestController
 @ApiImplicitParams({@ApiImplicitParam(name = "x-access-token", value = "x-access-token", required = false, paramType = "header",dataType = "string",dataTypeClass = String.class)})
 public class CommentController {
+
     @Autowired
     private CommentService commentService;
 
@@ -38,6 +40,7 @@ public class CommentController {
     public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam Integer novelId){
         return commentService.listCommentByNovelIdOrderByUp(pageParamDTO,novelId);
     }
+
     @ApiOperation("按用户id查询评论(点赞排序)分页")
     @PostMapping("/api/comment/listCommentByUserIdOrderByUp")
     @NeedUser
@@ -49,7 +52,6 @@ public class CommentController {
     @PostMapping("/api/comment/up")
     @NeedUser
     public ResponseDTO up(@Valid @RequestBody CommentUpVO commentUpVO){
-
         return commentService.up(commentUpVO);
     }
 
@@ -59,6 +61,7 @@ public class CommentController {
     public ResponseDTO up(@Valid @RequestBody CommentStatusVO commentStatusVO){
         return commentService.status(commentStatusVO);
     }
+
     @ApiOperation("添加评论")
     @PostMapping("/api/comment/create")
     @NeedUser
