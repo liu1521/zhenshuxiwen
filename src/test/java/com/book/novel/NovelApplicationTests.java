@@ -24,6 +24,7 @@ class NovelApplicationTests {
 
     @Test
     public void test() {
+
     }
 
 }

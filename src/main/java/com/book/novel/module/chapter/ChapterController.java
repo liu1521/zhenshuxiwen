@@ -7,6 +7,7 @@ import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.dto.ChapterDetailDTO;
+import com.book.novel.module.chapter.dto.ChapterQueryDTO;
 import com.book.novel.module.chapter.vo.ChapterUploadVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -38,8 +39,8 @@ public class ChapterController {
     @ApiOperation(value = "按小说id分页查询小说章节目录")
     @PostMapping("/api/chapter/listByNovelId")
     @NoNeedLogin
-    public ResponseDTO<PageResultDTO<ChapterCatalogDTO>> listChapterByNovelId(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam Integer novelId) {
-        return chapterService.listChapterByNovelId(pageParamDTO, novelId);
+    public ResponseDTO<PageResultDTO<ChapterCatalogDTO>> listChapterByNovelId(@Valid @RequestBody ChapterQueryDTO pageParamDTO) {
+        return chapterService.listChapterByNovelId(pageParamDTO);
     }
 
     @ApiOperation(value = "根据章节id获取章节详情")

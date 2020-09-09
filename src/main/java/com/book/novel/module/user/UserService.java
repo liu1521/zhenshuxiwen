@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -161,7 +162,7 @@ public class UserService {
         if (! StringUtils.isEmpty(paramHeadImgUrl)) {
             // 原头像不是默认头像 删除原头像
             String dbHeadImgUrl = userEntity.getHeadImgUrl();
-            if (! imgFileService.IMG_DEFAULT.equals(dbHeadImgUrl))  {
+            if (! dbHeadImgUrl.startsWith(ImgFileService.IMG_DEFAULT))  {
                 imgFileService.deleteUserHeadImg(dbHeadImgUrl);
             }
             userEntity.setHeadImgUrl(paramHeadImgUrl);
@@ -254,5 +255,14 @@ public class UserService {
         novelMapper.updateAddRecommend(novelId);
 
         return ResponseDTO.succ();
+    }
+
+    public ResponseDTO<List<UserBO>> listRegisterToAuthorUser() {
+        List<UserEntity> userEntities = userMapper.listRegisterToAuthorUser();
+        List<UserBO> list = new ArrayList<>();
+
+        userEntities.forEach(user -> list.add(new UserBO(user)));
+
+        return ResponseDTO.succData(list);
     }
 }

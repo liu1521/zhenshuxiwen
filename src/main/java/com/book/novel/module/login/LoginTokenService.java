@@ -12,6 +12,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -93,14 +94,19 @@ public class LoginTokenService {
 
         // 从redis中获取user信息
         String userBOJson = redisValueOperations.get(RedisKeyConstant.USER_INFO_PREFIX + userId);
-        UserBO userBO = (UserBO) JsonUtil.toObject(userBOJson, UserBO.class);
-        if (userBO == null) {
+        UserBO userBO = null;
+        if (StringUtils.isEmpty(userBOJson)) {
             // redis中没有则从db中查出并缓存到redis
             userBO = userService.getUserBOById(userId);
             if (userBO == null) {
                 return null;
             }
             redisValueOperations.set(RedisKeyConstant.USER_INFO_PREFIX+userId, JsonUtil.toJson(userBO), RedisExpireTimeConstant.OND_DAY, TimeUnit.SECONDS);
+        } else {
+            userBO = (UserBO) JsonUtil.toObject(userBOJson, UserBO.class);
+            if (userBO == null) {
+                return null;
+            }
         }
 
         if (UserStatusEnum.DISABLED.getValue().equals(userBO.getStatus())) {
@@ -113,8 +119,6 @@ public class LoginTokenService {
     public String getToken(HttpServletRequest request) {
         String headerToken = request.getHeader(TOKEN_NAME);
         String requestToken = request.getParameter(TOKEN_NAME);
-        String xAccessToken = headerToken != null ? headerToken : requestToken;
-        return xAccessToken;
+        return headerToken != null ? headerToken : requestToken;
     }
-
 }

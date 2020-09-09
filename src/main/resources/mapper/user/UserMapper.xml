@@ -28,6 +28,16 @@
         values (#{username}, #{email}, #{password}, #{sex})
     </insert>
 
+    <update id="updateRecommendAddOne">
+        update
+        user u
+        set
+        u.recommend=u.recommend+1
+        where
+        u.status&lt;2
+        and u.login_count&gt;0
+    </update>
+
     <update id="updateUserLoginInfo">
         update
         user u
@@ -150,6 +160,15 @@
         user u
         where
         u.id=#{userId}
+    </select>
+
+    <select id="listRegisterToAuthorUser" resultType="com.book.novel.module.user.entity.UserEntity">
+        select
+        <include refid="all"></include>
+        from
+        user u
+        where
+        u.status=1
     </select>
 
 </mapper>

@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @Author: liu
  * @Date: 2020/8/7
@@ -39,4 +41,8 @@ public interface UserMapper {
     Integer getTicketsById(@Param("userId") Integer requestUserId);
 
     void updateSubRecommend(@Param("userId") Integer requestUserId);
+
+    void updateRecommendAddOne();
+
+    List<UserEntity> listRegisterToAuthorUser();
 }

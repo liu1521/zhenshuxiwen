@@ -1,7 +1,9 @@
 package com.book.novel.module.user.bo;
 
 import com.book.novel.module.user.entity.UserEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Author: liu
@@ -10,6 +12,8 @@ import lombok.Data;
  */
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserBO {
 
     /**

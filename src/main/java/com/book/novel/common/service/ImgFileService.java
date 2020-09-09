@@ -28,7 +28,7 @@ public class ImgFileService {
 
     public static final String PGN = "image/png";
 
-    public static final String IMG_DEFAULT = "default.jpg";
+    public static final String IMG_DEFAULT = "default";
 
     @Value("${img.user-head-img.path-prefix}")
     private String userHeadImgPathPrefix;

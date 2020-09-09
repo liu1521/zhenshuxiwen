@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -81,6 +82,11 @@ public class GlobalExceptionHandler {
         // 发送邮件出错
         if (e instanceof MailSendException) {
             return ResponseDTO.wrap(ResponseCodeConst.MAIL_ERROR);
+        }
+
+        // 参数缺失
+        if (e instanceof MissingServletRequestParameterException) {
+            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
         }
 
         return ResponseDTO.wrap(ResponseCodeConst.SYSTEM_ERROR);

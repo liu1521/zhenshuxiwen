@@ -80,9 +80,4 @@ public class RankSchedule {
         novelService.updateNovelRank(RedisKeyConstant.RANK_RECOMMEND, 10);
     }
 
-//    @Scheduled(cron = "0/10 * * * * ?")
-//    public void ha_ha() {
-//        novelService.updateNovelRank(RedisKeyConstant.RANK_HITS, 30);
-//    }
-
 }

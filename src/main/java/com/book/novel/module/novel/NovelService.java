@@ -10,12 +10,13 @@ import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.novel.bo.PageBO;
 import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
+import com.book.novel.module.novel.dto.CategoryNovelQueryDTO;
+import com.book.novel.module.novel.dto.KeyNovelQueryDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.novel.dto.NovelDetailDTO;
 import com.book.novel.module.novel.entity.NovelEntity;
 import com.book.novel.module.novel.vo.NovelCreateVO;
 import com.book.novel.module.novel.vo.NovelInfoVO;
-import com.book.novel.module.user.constant.UserResponseCodeConst;
 import com.book.novel.util.BeanUtil;
 import com.book.novel.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,8 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,9 +58,9 @@ public class NovelService {
     @Autowired
     private ValueOperations<String, String> redisValueOperations;
 
-    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByCategory(PageParamDTO pageParamDTO, Integer categoryId) {
+    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByCategory(CategoryNovelQueryDTO pageParamDTO) {
         // 查询总条数
-        int totalCount = novelMapper.getNovelCountByCategory(categoryId);
+        int totalCount = novelMapper.getNovelCountByCategory(pageParamDTO.getCategoryId());
         if (totalCount == 0) {
             return ResponseDTO.wrap(NovelResponseCodeConstant.NOVEL_CATEGORY_ID_INVALID);
         }
@@ -73,15 +72,15 @@ public class NovelService {
 
         // 分页查询小说信息
         PageBO pageBO = new PageBO(pageParamDTO);
-        List<NovelDTO> novels = novelUserMapper.listNovelByCategory(pageBO, categoryId);
+        List<NovelDTO> novels = novelUserMapper.listNovelByCategory(pageBO, pageParamDTO.getCategoryId());
 
         this.setBase64Pic(novels);
         resultDTO.setList(novels);
         return ResponseDTO.succData(resultDTO);
     }
 
-    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(PageParamDTO pageParamDTO, String key) {
-        int totalCount = novelUserMapper.getNovelCountByKey(key);
+    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(KeyNovelQueryDTO pageParamDTO) {
+        int totalCount = novelUserMapper.getNovelCountByKey(pageParamDTO.getKey());
 
         PageResultDTO<NovelDTO> resultDTO = getPageResultDTO(pageParamDTO, totalCount);
         if (pageParamDTO.getSearchCount()) {
@@ -89,7 +88,7 @@ public class NovelService {
         }
 
         PageBO pageBO = new PageBO(pageParamDTO);
-        List<NovelDTO> novels = novelUserMapper.listNovelByKey(pageBO, key);
+        List<NovelDTO> novels = novelUserMapper.listNovelByKey(pageBO, pageParamDTO.getKey());
 
         this.setBase64Pic(novels);
         resultDTO.setList(novels);

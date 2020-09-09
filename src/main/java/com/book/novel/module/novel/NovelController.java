@@ -6,6 +6,8 @@ import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
+import com.book.novel.module.novel.dto.CategoryNovelQueryDTO;
+import com.book.novel.module.novel.dto.KeyNovelQueryDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.novel.dto.NovelDetailDTO;
 import com.book.novel.module.novel.vo.NovelCreateVO;
@@ -46,15 +48,15 @@ public class NovelController {
     @ApiOperation(value = "按类型分页查询小说")
     @PostMapping("/api/novel/listByCategory")
     @NoNeedLogin
-    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByCategory(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam Integer categoryId) {
-        return novelService.listNovelByCategory(pageParamDTO, categoryId);
+    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByCategory(@Valid @RequestBody CategoryNovelQueryDTO pageParamDTO) {
+        return novelService.listNovelByCategory(pageParamDTO);
     }
 
     @ApiOperation(value = "分页搜索查询小说")
     @PostMapping("/api/novel/listByKey")
     @NoNeedLogin
-    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam String key) {
-        return novelService.listNovelByKey(pageParamDTO, key);
+    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(@Valid @RequestBody KeyNovelQueryDTO pageParamDTO) {
+        return novelService.listNovelByKey(pageParamDTO);
     }
 
     @ApiOperation(value = "根据小说id获取小说详情")

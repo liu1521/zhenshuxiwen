@@ -7,6 +7,7 @@ import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.chapter.constant.ChapterResponseCodeConstant;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.dto.ChapterDetailDTO;
+import com.book.novel.module.chapter.dto.ChapterQueryDTO;
 import com.book.novel.module.chapter.entity.ChapterEntity;
 import com.book.novel.module.chapter.vo.ChapterUploadVO;
 import com.book.novel.module.login.LoginTokenService;
@@ -39,8 +40,8 @@ public class ChapterService {
     @Autowired
     private ChapterNovelMapper chapterNovelMapper;
 
-    public ResponseDTO<PageResultDTO<ChapterCatalogDTO>> listChapterByNovelId(PageParamDTO pageParamDTO, Integer novelId) {
-        int totalCount = chapterMapper.getChapterCountByNovelId(novelId);
+    public ResponseDTO<PageResultDTO<ChapterCatalogDTO>> listChapterByNovelId(ChapterQueryDTO pageParamDTO) {
+        int totalCount = chapterMapper.getChapterCountByNovelId(pageParamDTO.getNovelId());
         if (totalCount == 0) {
             return ResponseDTO.wrap(ChapterResponseCodeConstant.NOVEL_ID_VALID);
         }
@@ -49,8 +50,9 @@ public class ChapterService {
             resultDTO.setTotal(totalCount);
         }
 
+        if (resultDTO.getPageSize()  < 0) resultDTO.setPageSize(totalCount);
         int start = (resultDTO.getCurrentPage()-1) * resultDTO.getPageSize();
-        List<ChapterCatalogDTO> chapters = chapterMapper.listChapterByNovelId(start, resultDTO.getPageSize(), novelId);
+        List<ChapterCatalogDTO> chapters = chapterMapper.listChapterByNovelId(start, resultDTO.getPageSize(), pageParamDTO.getNovelId());
 
         resultDTO.setList(chapters);
         return ResponseDTO.succData(resultDTO);

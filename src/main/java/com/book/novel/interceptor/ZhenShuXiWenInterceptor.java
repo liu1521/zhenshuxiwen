@@ -38,7 +38,7 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
     private LoginTokenService loginTokenService;
 
     /**
-     * controller执行前前执行 配置跨域问题
+     * controller执行前前执行 配置跨域问题 验证用户token
      * @param request
      * @param response
      * @param handler

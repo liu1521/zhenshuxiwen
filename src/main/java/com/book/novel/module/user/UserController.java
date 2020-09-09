@@ -1,11 +1,13 @@
 package com.book.novel.module.user;
 
+import com.book.novel.common.anno.NeedAdmin;
 import com.book.novel.common.anno.NeedUser;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
+import com.book.novel.module.user.bo.UserBO;
 import com.book.novel.module.user.vo.UserInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -76,7 +78,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "注册成为作家，需要等待管理员审核")
-    @GetMapping("api/user/author/register")
+    @GetMapping("/api/user/author/register")
     @NeedUser
     public ResponseDTO register2author(HttpServletRequest request) {
         return userService.updateUserStatus2one(request);
@@ -89,5 +91,11 @@ public class UserController {
         return userService.active(mailUuid);
     }
 
+    @ApiOperation(value = "获取想要注册成为作家的所有用户")
+    @GetMapping("/api/admin/registerToAuthor/get")
+    @NeedAdmin
+    public ResponseDTO<List<UserBO>> listRegisterToAuthorUser() {
+        return userService.listRegisterToAuthorUser();
+    }
 
 }
