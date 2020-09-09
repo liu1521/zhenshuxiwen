@@ -4,6 +4,7 @@ import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
+import com.book.novel.common.service.ImgFileService;
 import com.book.novel.module.comment.dto.CommentDetailDTO;
 import com.book.novel.module.comment.dto.CommentQueryByNovelIdDTO;
 import com.book.novel.module.comment.dto.CommentQueryByUserIdDTO;
@@ -13,6 +14,8 @@ import com.book.novel.module.comment.vo.CommentStatusVO;
 import com.book.novel.module.comment.vo.CommentUpVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author: liu
@@ -25,6 +28,21 @@ public class CommentService {
     @Autowired
     private CommentMapper commentMapper;
 
+    @Autowired
+    private ImgFileService imgFileService;
+
+
+//    /**
+//     * 根据父评论id查询对应评论(分页)
+//     * @param pageParamDTO
+//     * @param parentId
+//     * @return
+//     */
+//    public ResponseDTO<PageResultDTO<CommentDetailDTO>> listCommentByParentIdOrderByUp(PageParamDTO pageParamDTO, Integer parentId){
+//        PageResultDTO<CommentDetailDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByNovelId(parentId));
+//        pageResultDTO.setList(commentMapper.listCommentByNovelIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(),parentId));
+//        return ResponseDTO.succData(pageResultDTO);
+//    }
     /**
      *
      * @param pageParamDTO
@@ -54,7 +72,9 @@ public class CommentService {
      */
     public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(CommentQueryByNovelIdDTO pageParamDTO){
         PageResultDTO<CommentDetailDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByNovelId(pageParamDTO.getNovelId()));
-        pageResultDTO.setList(commentMapper.listCommentByNovelIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(),pageParamDTO.getNovelId()));
+        List<CommentDetailDTO> commentDetailDTOS = commentMapper.listCommentByNovelIdOrderByUp((pageResultDTO.getCurrentPage() - 1) * pageResultDTO.getPageSize(), pageResultDTO.getPageSize(), pageParamDTO.getNovelId());
+        commentDetailDTOS.forEach((c)->{c.setHeadImg(imgFileService.getUserHeadImg(c.getHeadImg()));});
+        pageResultDTO.setList(commentDetailDTOS);
         return ResponseDTO.succData(pageResultDTO);
     }
 

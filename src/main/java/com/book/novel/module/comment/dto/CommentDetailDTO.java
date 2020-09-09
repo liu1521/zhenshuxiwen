@@ -28,9 +28,19 @@ public class CommentDetailDTO {
     private Date createTime;
 
     /**
+     *  发表用户id
+     */
+    private Integer userId;
+
+    /**
      * 评论者id
      */
     private String username;
+
+    /**
+     * 用户头像
+     */
+    private String headImg;
 
     /**
      * 顶
