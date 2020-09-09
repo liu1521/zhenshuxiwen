@@ -23,7 +23,7 @@
         update comment set up = up + 1 where id = #{id}
     </update>
 
-    <insert id="">
-        INSERT INTO comment (content,create_time,user_id,novel_id) VALUES(#{content},#{createTime},#{userId},#{novelId})
+    <insert id="insert">
+        INSERT INTO comment (content,create_time,user_id,novel_id) VALUES(#{content},now(),#{userId},#{novelId})
     </insert>
 </mapper>

@@ -47,7 +47,7 @@ public class UserBO {
     private String introduce;
 
     /**
-     * 账号状态  0未激活 1可使用 2已禁用
+     * 账号状态  0可使用 1注册作者待审核 2已禁用
      */
     private Integer status;
 

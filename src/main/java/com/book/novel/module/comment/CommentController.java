@@ -3,10 +3,11 @@ package com.book.novel.module.comment;
 import com.book.novel.common.anno.NeedAdmin;
 import com.book.novel.common.anno.NeedUser;
 import com.book.novel.common.anno.NoNeedLogin;
-import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.comment.dto.CommentDetailDTO;
+import com.book.novel.module.comment.dto.CommentQueryByNovelIdDTO;
+import com.book.novel.module.comment.dto.CommentQueryByUserIdDTO;
 import com.book.novel.module.comment.dto.CommentUserIdDTO;
 import com.book.novel.module.comment.vo.CommentCreateVO;
 import com.book.novel.module.comment.vo.CommentStatusVO;
@@ -16,7 +17,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -37,15 +40,15 @@ public class CommentController {
     @ApiOperation("按小说id查询评论(点赞排序)分页")
     @PostMapping("/api/comment/listCommentByNovelIdOrderByUp")
     @NoNeedLogin
-    public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam Integer novelId){
-        return commentService.listCommentByNovelIdOrderByUp(pageParamDTO,novelId);
+    public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(@Valid @RequestBody CommentQueryByNovelIdDTO pageParamDTO){
+        return commentService.listCommentByNovelIdOrderByUp(pageParamDTO);
     }
 
     @ApiOperation("按用户id查询评论(点赞排序)分页")
     @PostMapping("/api/comment/listCommentByUserIdOrderByUp")
     @NeedUser
-    public ResponseDTO<PageResultDTO<CommentUserIdDTO>>  listCommentByUserIdOrderByUp(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam Integer userId){
-        return commentService.listCommentByUserIdOrderByUp(pageParamDTO,userId);
+    public ResponseDTO<PageResultDTO<CommentUserIdDTO>>  listCommentByUserIdOrderByUp(@Valid @RequestBody CommentQueryByUserIdDTO pageParamDTO){
+        return commentService.listCommentByUserIdOrderByUp(pageParamDTO);
     }
 
     @ApiOperation("点赞")

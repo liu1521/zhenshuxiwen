@@ -8,6 +8,7 @@ import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.user.bo.UserBO;
+import com.book.novel.module.user.constant.UserStatusEnum;
 import com.book.novel.module.user.vo.UserInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -81,7 +82,7 @@ public class UserController {
     @GetMapping("/api/user/author/register")
     @NeedUser
     public ResponseDTO register2author(HttpServletRequest request) {
-        return userService.updateUserStatus2one(request);
+        return userService.updateUserStatus(UserStatusEnum.TO_BE_AUTHOR.getValue(), request);
     }
 
     @ApiOperation(value = "激活账号", notes = "激活链接5分钟内有效")
@@ -98,4 +99,17 @@ public class UserController {
         return userService.listRegisterToAuthorUser();
     }
 
+//    @ApiOperation(value = "注册成为作者审核通过")
+//    @PostMapping("/api/admin/registerToAuthor/success")
+//    @NeedAdmin
+//    public ResponseDTO registerToAuthorSuccess(@RequestParam Integer userId) {
+//        return userService.registerToAuthorExamine(UserStatusEnum.NORMAL.getValue(), userId);
+//    }
+
+    @ApiOperation(value = "注册成为作者审核拒绝")
+    @PostMapping("/api/admin/registerToAuthor/fail")
+    @NeedAdmin
+    public ResponseDTO registerToAuthorFail(@RequestParam Integer userId) {
+        return userService.updateUserStatus(UserStatusEnum.NORMAL.getValue(), userId);
+    }
 }

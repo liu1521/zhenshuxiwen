@@ -5,14 +5,14 @@ import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.comment.dto.CommentDetailDTO;
+import com.book.novel.module.comment.dto.CommentQueryByNovelIdDTO;
+import com.book.novel.module.comment.dto.CommentQueryByUserIdDTO;
 import com.book.novel.module.comment.dto.CommentUserIdDTO;
 import com.book.novel.module.comment.vo.CommentCreateVO;
 import com.book.novel.module.comment.vo.CommentStatusVO;
 import com.book.novel.module.comment.vo.CommentUpVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 /**
  * @Author: liu
@@ -50,24 +50,22 @@ public class CommentService {
     /**
      * 根据小说查询对应评论(分页)
      * @param pageParamDTO
-     * @param novelId
      * @return
      */
-    public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(PageParamDTO pageParamDTO, Integer novelId){
-        PageResultDTO<CommentDetailDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByNovelId(novelId));
-        pageResultDTO.setList(commentMapper.listCommentByNovelIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(),novelId));
+    public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(CommentQueryByNovelIdDTO pageParamDTO){
+        PageResultDTO<CommentDetailDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByNovelId(pageParamDTO.getNovelId()));
+        pageResultDTO.setList(commentMapper.listCommentByNovelIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(),pageParamDTO.getNovelId()));
         return ResponseDTO.succData(pageResultDTO);
     }
 
     /**
      * 根据用户id查询评论(分页)
      * @param pageParamDTO
-     * @param userId
      * @return
      */
-    public ResponseDTO<PageResultDTO<CommentUserIdDTO>>  listCommentByUserIdOrderByUp(PageParamDTO pageParamDTO,Integer userId){
-        PageResultDTO<CommentUserIdDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByUserId(userId),false);
-        pageResultDTO.setList(commentMapper.listCommentByUserIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(),userId));
+    public ResponseDTO<PageResultDTO<CommentUserIdDTO>>  listCommentByUserIdOrderByUp(CommentQueryByUserIdDTO pageParamDTO){
+        PageResultDTO<CommentUserIdDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByUserId(pageParamDTO.getUserId()),false);
+        pageResultDTO.setList(commentMapper.listCommentByUserIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(), pageParamDTO.getUserId()));
         return ResponseDTO.succData(pageResultDTO);
     }
 
@@ -104,7 +102,7 @@ public class CommentService {
      * @return
      */
     public ResponseDTO insert(CommentCreateVO commentCreateVO){
-        Integer insert = commentMapper.insert(commentCreateVO.getContent(), new Date(), commentCreateVO.getUserId(), commentCreateVO.getNovelId());
+        Integer insert = commentMapper.insert(commentCreateVO.getContent(), commentCreateVO.getUserId(), commentCreateVO.getNovelId());
         if(insert == 1){
             return ResponseDTO.succ();
         }

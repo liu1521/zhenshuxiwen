@@ -205,13 +205,17 @@ public class UserService {
         return ResponseDTO.succData(favoritesNovel);
     }
 
-    public ResponseDTO updateUserStatus2one(HttpServletRequest request) {
+    public ResponseDTO updateUserStatus(Integer status, HttpServletRequest request) {
         String token = loginTokenService.getToken(request);
         RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
         if (requestTokenBO.getUserBO().getStatus() == 1) {
             ResponseDTO.wrap(UserResponseCodeConst.APPLIED);
         }
-        if (userMapper.updateStatusById(1, requestTokenBO.getRequestUserId()) < 1) {
+        return updateUserStatus(status, requestTokenBO.getRequestUserId());
+    }
+
+    public ResponseDTO updateUserStatus(Integer status, Integer userId) {
+        if (userMapper.updateStatusById(status, userId) < 1) {
             return ResponseDTO.wrap(UserResponseCodeConst.USER_NOT_EXISTS);
         }
         return ResponseDTO.succ();
