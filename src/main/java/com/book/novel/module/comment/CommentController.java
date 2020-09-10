@@ -37,6 +37,13 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+//    @ApiOperation("按父评论id查询评论(点赞排序)分页")
+//    @PostMapping("/api/comment/listCommentByParentIdOrderByUp")
+//    @NoNeedLogin
+//    public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByParentIdOrderByUp(@Valid @RequestBody PageParamDTO pageParamDTO, @RequestParam Integer ParentId){
+//        return commentService.listCommentByParentIdOrderByUp(pageParamDTO,ParentId);
+//    }
+
     @ApiOperation("按小说id查询评论(点赞排序)分页")
     @PostMapping("/api/comment/listCommentByNovelIdOrderByUp")
     @NoNeedLogin
