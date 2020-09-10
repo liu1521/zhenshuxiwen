@@ -3,6 +3,7 @@ package com.book.novel.module.comment;
 import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
+import com.book.novel.common.service.ImgFileService;
 import com.book.novel.module.comment.dto.CommentDetailDTO;
 import com.book.novel.module.comment.dto.CommentQueryByNovelIdDTO;
 import com.book.novel.module.comment.dto.CommentQueryByUserIdDTO;
@@ -13,6 +14,8 @@ import com.book.novel.module.comment.vo.CommentUpVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author: liu
  * @Date: 2020/8/7
@@ -21,6 +24,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CommentService {
+
+    @Autowired
+    private ImgFileService imgFileService;
+
     @Autowired
     private CommentMapper commentMapper;
 
@@ -30,12 +37,16 @@ public class CommentService {
      * @return
      */
     public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(CommentQueryByNovelIdDTO pageParamDTO){
+        List<CommentDetailDTO> commentDetailDTOList = commentMapper.listCommentByNovelIdOrderByUp((pageParamDTO.getCurrentPage() - 1) * pageParamDTO.getPageSize()
+                , pageParamDTO.getPageSize()
+                , pageParamDTO.getNovelId());
+        commentDetailDTOList.forEach(commentDetailDTO -> commentDetailDTO.setHeadImg(imgFileService.getUserHeadImg(commentDetailDTO.getHeadImg())));
+
         PageResultDTO<CommentDetailDTO> pageResultDTO = PageResultDTO.instance(
                 pageParamDTO,
                 commentMapper.getCountByNovelId(pageParamDTO.getNovelId()),
-                commentMapper.listCommentByNovelIdOrderByUp((pageParamDTO.getCurrentPage()-1)*pageParamDTO.getPageSize()
-                        ,pageParamDTO.getPageSize()
-                        ,pageParamDTO.getNovelId()));
+                commentDetailDTOList
+                );
         return ResponseDTO.succData(pageResultDTO);
     }
 
