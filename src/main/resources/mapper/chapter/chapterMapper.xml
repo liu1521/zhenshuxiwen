@@ -34,6 +34,15 @@
         ch.novel_id=#{novelId}
     </delete>
 
+    <update id="updateChapterStatus">
+        update
+        chapter ch
+        set
+        ch.status=#{status}
+        where
+        ch.id=#{chapterId}
+    </update>
+
     <select id="getChapterCountByNovelId" resultType="java.lang.Integer">
         select
         count(ch.id)

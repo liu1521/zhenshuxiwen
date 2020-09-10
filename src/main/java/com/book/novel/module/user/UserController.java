@@ -47,8 +47,8 @@ public class UserController {
 
     @ApiOperation(value = "上传头像", notes = "图片格式.jpg .jpeg .png;修改个人信息提交的时候先上传头像拿到返回头像url,将头像url写入个人信息的一个input标签,并将所有的个人信息传到服务器")
     @PostMapping("/api/user/headImg/upload")
-    @NeedUser
-    public ResponseDTO uploadHeadImg(@RequestParam MultipartFile multipartFile) {
+    @NoNeedLogin
+    public ResponseDTO uploadHeadImg(@RequestParam("avatar") MultipartFile multipartFile) {
         return userService.uploadHeadImg(multipartFile);
     }
 

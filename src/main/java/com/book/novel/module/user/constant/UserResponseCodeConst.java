@@ -89,6 +89,12 @@ public class UserResponseCodeConst extends ResponseCodeConst {
      */
     public static final UserResponseCodeConst RECOMMEND_ERROR = new UserResponseCodeConst(3016, "推荐票不足");
 
+    /**
+     * 激活成功
+     */
+    public static final UserResponseCodeConst ACTIVE_SUCCESS = new UserResponseCodeConst(3015, "激活成功");
+
+
     public UserResponseCodeConst(int code, String msg) {
         super(code, msg);
     }

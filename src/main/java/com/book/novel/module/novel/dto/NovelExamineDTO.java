@@ -1,6 +1,6 @@
 package com.book.novel.module.novel.dto;
 
-import com.book.novel.module.novel.constant.NovelStatusEnum;
+import com.book.novel.common.constant.ExamineStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,12 +38,12 @@ public class NovelExamineDTO {
         this.pic = novelDetailDTO.getPic();
         this.introduce = novelDetailDTO.getIntroduce();
 
-        if (NovelStatusEnum.EXAMINE_WAIT.getValue().equals(novelDetailDTO.getStatus())) {
-            this.status = NovelStatusEnum.EXAMINE_WAIT.getDesc();
-        } else if (NovelStatusEnum.EXAMINE_SUCCESS.getValue().equals(novelDetailDTO.getStatus())) {
-            this.status = NovelStatusEnum.EXAMINE_SUCCESS.getDesc();
-        } else if (NovelStatusEnum.EXAMINE_FAIL.getValue().equals(novelDetailDTO.getStatus())) {
-            this.status = NovelStatusEnum.EXAMINE_FAIL.getDesc();
+        if (ExamineStatusEnum.EXAMINE_WAIT.getValue().equals(novelDetailDTO.getStatus())) {
+            this.status = ExamineStatusEnum.EXAMINE_WAIT.getDesc();
+        } else if (ExamineStatusEnum.EXAMINE_SUCCESS.getValue().equals(novelDetailDTO.getStatus())) {
+            this.status = ExamineStatusEnum.EXAMINE_SUCCESS.getDesc();
+        } else if (ExamineStatusEnum.EXAMINE_FAIL.getValue().equals(novelDetailDTO.getStatus())) {
+            this.status = ExamineStatusEnum.EXAMINE_FAIL.getDesc();
         }
     }
 }

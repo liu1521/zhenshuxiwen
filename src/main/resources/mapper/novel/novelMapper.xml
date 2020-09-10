@@ -60,6 +60,24 @@
         n.id=#{novelId}
     </delete>
 
+    <update id="updateNovelWordAddByNovelId">
+        update
+        novel n
+        set
+        n.word=n.word+#{wordNum}
+        where
+        n.id=#{novelId}
+    </update>
+
+    <update id="updateNovelStatus">
+        update
+        novel n
+        set
+        n.status=#{status}
+        where
+        n.id=#{novelId}
+    </update>
+
     <update id="updateHits">
         update
         novel n

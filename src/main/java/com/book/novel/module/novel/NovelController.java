@@ -73,8 +73,8 @@ public class NovelController {
 
     @ApiOperation(value = "上传小说封面")
     @PostMapping("/api/novel/cover/upload")
-    @NeedAuthor
-    public ResponseDTO uploadNovelCover(MultipartFile multipartFile) {
+    @NoNeedLogin
+    public ResponseDTO uploadNovelCover(@RequestParam("avatar") MultipartFile multipartFile) {
         return novelService.uploadNovelCover(multipartFile);
     }
 
@@ -154,4 +154,19 @@ public class NovelController {
     public ResponseDTO<PageResultDTO<NovelExamineDTO>> listNovelUnExamine(@Valid @RequestBody PageParamDTO pageParamDTO) {
         return novelService.listNovelUnExamine(pageParamDTO);
     }
+
+    @ApiOperation(value = "小说审核通过")
+    @PostMapping("/api/novel/admin/examine/success")
+    @NeedAdmin
+    public ResponseDTO createNovelSuccess(@RequestParam("novelId") Integer novelId) {
+        return novelService.updateNovelStatus(novelId, true);
+    }
+
+    @ApiOperation(value = "小说审核拒绝")
+    @PostMapping("/api/novel/admin/examine/fail")
+    @NeedAdmin
+    public ResponseDTO createNovelFail(@RequestParam("novelId") Integer novelId) {
+        return novelService.updateNovelStatus(novelId, false);
+    }
+
 }

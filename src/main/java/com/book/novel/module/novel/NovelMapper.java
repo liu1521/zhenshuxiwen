@@ -44,4 +44,8 @@ public interface NovelMapper {
     Integer countUnExamineNovel();
 
     List<NovelDetailDTO> listNovelUnExamine(@Param("pageBO") PageBO pageBO);
+
+    void updateNovelStatus(@Param("status") Integer status, @Param("novelId") Integer novelId);
+
+    void updateNovelWordAddByNovelId(@Param("wordNum") Integer length, @Param("novelId") Integer novelId);
 }

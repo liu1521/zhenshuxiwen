@@ -1,18 +1,22 @@
 package com.book.novel.module.chapter;
 
 import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.module.chapter.constant.ChapterResponseCodeConstant;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.dto.ChapterDetailDTO;
+import com.book.novel.module.chapter.dto.ChapterExamineDTO;
 import com.book.novel.module.chapter.dto.ChapterQueryDTO;
 import com.book.novel.module.chapter.entity.ChapterEntity;
 import com.book.novel.module.chapter.vo.ChapterUploadVO;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.novel.NovelMapper;
+import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
+import com.book.novel.common.constant.ExamineStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +45,7 @@ public class ChapterService {
     private ChapterNovelMapper chapterNovelMapper;
 
     public ResponseDTO<PageResultDTO<ChapterCatalogDTO>> listChapterByNovelId(ChapterQueryDTO pageParamDTO) {
-        int totalCount = chapterMapper.getChapterCountByNovelId(pageParamDTO.getNovelId());
+        Integer totalCount = chapterMapper.getChapterCountByNovelId(pageParamDTO.getNovelId());
         if (totalCount == 0) {
             return ResponseDTO.wrap(ChapterResponseCodeConstant.NOVEL_ID_VALID);
         }
@@ -81,6 +85,30 @@ public class ChapterService {
 
         chapterMapper.saveChapter(chapterEntity);
 
+        novelMapper.updateNovelWordAddByNovelId(chapterUploadVO.getContent().length(), chapterUploadVO.getNovelId());
+
         return ResponseDTO.succ();
+    }
+
+    public ResponseDTO<PageResultDTO<ChapterExamineDTO>> listChapterUnExamine(PageParamDTO pageParamDTO) {
+        Integer total = chapterMapper.countUnExamineChapter();
+
+        PageBO pageBO = new PageBO(pageParamDTO);
+        List<ChapterExamineDTO> chapterExamineDTOList = chapterNovelMapper.listUnExamineChapter(pageBO);
+
+        PageResultDTO<ChapterExamineDTO> resultDTO = PageResultDTO.instance(pageParamDTO, total, chapterExamineDTOList);
+        return ResponseDTO.succData(resultDTO);
+    }
+
+    public ResponseDTO updateChapterStatus(Integer chapterId, boolean success) {
+        if (success) {
+            chapterMapper.updateChapterStatus(ExamineStatusEnum.EXAMINE_SUCCESS.getValue(), chapterId);
+
+            return ResponseDTO.wrap(NovelResponseCodeConstant.EXAMINE_SUCCESS);
+        } else {
+            chapterMapper.updateChapterStatus(ExamineStatusEnum.EXAMINE_FAIL.getValue(), chapterId);
+
+            return ResponseDTO.wrap(NovelResponseCodeConstant.EXAMINE_FAIL);
+        }
     }
 }

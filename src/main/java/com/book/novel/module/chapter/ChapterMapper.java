@@ -27,4 +27,8 @@ public interface ChapterMapper {
     Integer getChapterNumByNovelId(@Param("novelId") Integer novelId);
 
     void saveChapter(ChapterEntity chapterEntity);
+
+    Integer countUnExamineChapter();
+
+    void updateChapterStatus(@Param("status") Integer status, @Param("chapterId") Integer chapterId);
 }

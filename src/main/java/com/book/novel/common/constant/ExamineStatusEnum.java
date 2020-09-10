@@ -1,4 +1,4 @@
-package com.book.novel.module.novel.constant;
+package com.book.novel.common.constant;
 
 /**
  * @Author: liu
@@ -6,7 +6,7 @@ package com.book.novel.module.novel.constant;
  * @Description:
  */
 
-public enum NovelStatusEnum {
+public enum ExamineStatusEnum {
 
     /**
      * 待审核状态 0
@@ -27,7 +27,7 @@ public enum NovelStatusEnum {
 
     private String desc;
 
-    NovelStatusEnum(Integer value, String desc) {
+    ExamineStatusEnum(Integer value, String desc) {
         this.value = value;
         this.desc = desc;
     }

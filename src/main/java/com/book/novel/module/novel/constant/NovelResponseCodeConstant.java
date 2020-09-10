@@ -44,6 +44,16 @@ public class NovelResponseCodeConstant extends ResponseCodeConst {
      */
     public static final NovelResponseCodeConstant UN_FAVORITES_FAIL = new NovelResponseCodeConstant(4007, "未收藏小说");
 
+    /**
+     * 小说审核通过
+     */
+    public static final NovelResponseCodeConstant EXAMINE_SUCCESS = new NovelResponseCodeConstant(4008, "小说审核通过");
+
+    /**
+     * 小说审核拒绝
+     */
+    public static final NovelResponseCodeConstant EXAMINE_FAIL = new NovelResponseCodeConstant(4009, "小说审核拒绝");
+
     public NovelResponseCodeConstant(int code, String msg) {
         super(code, msg);
     }

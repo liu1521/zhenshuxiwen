@@ -137,7 +137,7 @@ public class UserService {
 
         userMapper.saveUser(saveUser);
 
-        return ResponseDTO.succ();
+        return ResponseDTO.succMsg(UserResponseCodeConst.ACTIVE_SUCCESS.getMsg());
     }
 
     public ResponseDTO<LoginDetailDTO> updateUserInfo(UserInfoVO userInfoVO) {

@@ -10,6 +10,7 @@ import com.book.novel.module.chapter.ChapterMapper;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
+import com.book.novel.common.constant.ExamineStatusEnum;
 import com.book.novel.module.novel.dto.*;
 import com.book.novel.module.novel.entity.NovelEntity;
 import com.book.novel.module.novel.vo.NovelCreateVO;
@@ -166,7 +167,7 @@ public class NovelService {
         RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
 
         NovelEntity novelEntity = BeanUtil.copy(novelCreateVO, NovelEntity.class);
-        novelEntity.setAuthorId(10090);
+        novelEntity.setAuthorId(requestTokenBO.getRequestUserId());
 
         try{
             novelMapper.saveNovel(novelEntity);
@@ -178,6 +179,7 @@ public class NovelService {
     }
 
     public ResponseDTO uploadNovelCover(MultipartFile multipartFile) {
+        if (multipartFile == null) return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
         String fileName = imgFileService.saveNovelCoverImg(multipartFile);
         if (StringUtils.isEmpty(fileName)) {
             return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
@@ -237,5 +239,17 @@ public class NovelService {
 
         PageResultDTO<NovelExamineDTO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount, novelExamineDTOList);
         return ResponseDTO.succData(resultDTO);
+    }
+
+    public ResponseDTO updateNovelStatus(Integer novelId, boolean success) {
+        if (success) {
+            novelMapper.updateNovelStatus(ExamineStatusEnum.EXAMINE_SUCCESS.getValue(), novelId);
+
+            return ResponseDTO.wrap(NovelResponseCodeConstant.EXAMINE_SUCCESS);
+        } else {
+            novelMapper.updateNovelStatus(ExamineStatusEnum.EXAMINE_FAIL.getValue(), novelId);
+
+            return ResponseDTO.wrap(NovelResponseCodeConstant.EXAMINE_FAIL);
+        }
     }
 }
