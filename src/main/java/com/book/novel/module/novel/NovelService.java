@@ -159,6 +159,7 @@ public class NovelService {
         String token = loginTokenService.getToken(request);
         RequestTokenBO requestTokenBO = loginTokenService.getUserTokenInfo(token);
         List<NovelDetailDTO> novelDetailDTOList = novelUserMapper.listNovelDetailDTOByAuthorId(requestTokenBO.getRequestUserId());
+        novelDetailDTOList.forEach(novelDetailDTO -> novelDetailDTO.setPic(imgFileService.getNovelCoverImg(novelDetailDTO.getPic())));
         return ResponseDTO.succData(novelDetailDTOList);
     }
 

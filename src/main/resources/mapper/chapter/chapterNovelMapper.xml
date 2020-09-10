@@ -55,7 +55,7 @@
         left join novel n on ch.novel_id=n.id
         left join user u on u.id=n.author_id
         where
-        ch.status=0
+        ch.status=2
         limit #{pageBO.start}, #{pageBO.pageSize}
     </select>
 

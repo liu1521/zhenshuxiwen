@@ -29,9 +29,9 @@
 
     <delete id="deleteChapterByNovelId">
         delete from
-        chapter ch
+        chapter
         where
-        ch.novel_id=#{novelId}
+        novel_id=#{novelId}
     </delete>
 
     <update id="updateChapterStatus">

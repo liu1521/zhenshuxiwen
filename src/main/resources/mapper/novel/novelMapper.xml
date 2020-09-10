@@ -55,9 +55,9 @@
 
     <delete id="deleteNovelByNovelId">
         delete from
-        novel n
+        novel
         where
-        n.id=#{novelId}
+        id=#{novelId}
     </delete>
 
     <update id="updateNovelWordAddByNovelId">
@@ -65,6 +65,7 @@
         novel n
         set
         n.word=n.word+#{wordNum}
+        n.update_time=now()
         where
         n.id=#{novelId}
     </update>
@@ -167,7 +168,7 @@
         from
         novel n
         where
-        n.novel_id=#{novelId}
+        n.id=#{novelId}
     </select>
 
     <select id="getByNovelId" resultType="com.book.novel.module.novel.entity.NovelEntity">
@@ -176,7 +177,7 @@
         from
         novel n
         where
-        n.novel_id=#{novelId}
+        n.id=#{novelId}
     </select>
 
     <select id="countUnExamineNovel">
