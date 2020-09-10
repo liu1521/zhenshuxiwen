@@ -38,15 +38,22 @@ public class PageResultDTO<T> {
     @ApiModelProperty(value = "总页数")
     private Integer pages;
 
-    /**
-     * 结果集
-     */
-    @ApiModelProperty(value = "结果集")
     private List<T> list;
 
-    public PageResultDTO(Integer currentPage, Integer pageSize, Integer pages) {
-        this.currentPage = currentPage;
-        this.pageSize = pageSize;
-        this.pages = pages;
+
+    private PageResultDTO(PageParamDTO pageParamDTO, Integer totalCount) {
+        if (totalCount == null) totalCount = 0;
+
+        this.currentPage = pageParamDTO.getCurrentPage();
+        this.pageSize = pageParamDTO.getPageSize();
+        this.pages = totalCount%pageSize == 0 ? totalCount/pageSize : totalCount/pageSize+1;
+        if (pageParamDTO.getSearchCount()) this.total = totalCount;
+    }
+
+
+    public static <T> PageResultDTO<T> instance(PageParamDTO pageParamDTO, Integer totalCount, List<T> list) {
+        PageResultDTO<T> resultDTO = new PageResultDTO<>(pageParamDTO, totalCount);
+        resultDTO.list = list;
+        return resultDTO;
     }
 }

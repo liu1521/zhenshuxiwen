@@ -1,4 +1,4 @@
-package com.book.novel.module.novel.bo;
+package com.book.novel.common.domain.bo;
 
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.module.novel.constant.NovelOrderKeyConstant;

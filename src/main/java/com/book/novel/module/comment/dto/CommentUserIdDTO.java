@@ -1,5 +1,7 @@
 package com.book.novel.module.comment.dto;
 
+import lombok.Data;
+
 import java.util.Date;
 
 /**
@@ -7,6 +9,8 @@ import java.util.Date;
  * @Date: 2020/8/13
  * @Description:
  */
+
+@Data
 public class CommentUserIdDTO {
     /**
      * 主键id
@@ -39,7 +43,7 @@ public class CommentUserIdDTO {
     private Integer up;
 
     /**
-     *
+     * 所属小说
      */
     private Integer novelId;
 }

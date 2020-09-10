@@ -62,7 +62,7 @@
         ch.novel_id=#{novelId}
         and ch.status &lt; 2
         order by ch.chapter_number asc
-        limit #{start}, #{pageSize}
+        limit #{pageBO.start}, #{pageBO.pageSize}
     </select>
 
 

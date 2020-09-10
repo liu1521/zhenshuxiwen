@@ -1,5 +1,6 @@
 package com.book.novel.module.chapter;
 
+import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.entity.ChapterEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,7 +20,7 @@ public interface ChapterMapper {
 
     Integer getChapterCountByNovelId(@Param("novelId") Integer novelId);
 
-    List<ChapterCatalogDTO> listChapterByNovelId(@Param("start") Integer start, @Param("pageSize") Integer pageSize, @Param("novelId") Integer novelId);
+    List<ChapterCatalogDTO> listChapterByNovelId(@Param("pageBO") PageBO pageBO, @Param("novelId") Integer novelId);
 
     void deleteChapterByNovelId(@Param("novelId") Integer novelId);
 

@@ -28,6 +28,15 @@
         values (#{username}, #{email}, #{password}, #{sex})
     </insert>
 
+    <update id="updateRoleToAuthor">
+        update
+        user u
+        set
+        u.role_id=8888
+        where
+        u.id=#{userId}
+    </update>
+
     <update id="updateRecommendAddOne">
         update
         user u
@@ -107,13 +116,13 @@
         u.username=#{username}
     </select>
 
-    <select id="getUserByUsernameAndPassword" resultType="com.book.novel.module.user.entity.UserEntity">
+    <select id="getUserByEmailAndPassword" resultType="com.book.novel.module.user.entity.UserEntity">
         select
         <include refid="all"></include>
         from
         user u
         where
-        u.username=#{username}
+        u.email=#{email}
         and u.password=#{password}
     </select>
 
@@ -165,6 +174,15 @@
     <select id="listRegisterToAuthorUser" resultType="com.book.novel.module.user.entity.UserEntity">
         select
         <include refid="all"></include>
+        from
+        user u
+        where
+        u.status=1
+    </select>
+
+    <select id="countRegisterToAuthorUser">
+        select
+        count(u.id)
         from
         user u
         where

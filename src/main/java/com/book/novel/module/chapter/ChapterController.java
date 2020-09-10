@@ -2,7 +2,6 @@ package com.book.novel.module.chapter;
 
 import com.book.novel.common.anno.NeedAuthor;
 import com.book.novel.common.anno.NoNeedLogin;
-import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;

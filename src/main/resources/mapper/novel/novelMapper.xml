@@ -152,4 +152,21 @@
         n.novel_id=#{novelId}
     </select>
 
+    <select id="getByNovelId" resultType="com.book.novel.module.novel.entity.NovelEntity">
+        select
+        <include refid="all"></include>
+        from
+        novel n
+        where
+        n.novel_id=#{novelId}
+    </select>
+
+    <select id="countUnExamineNovel">
+        select
+        count(n.id)
+        from
+        novel n
+        where
+        n.status=0
+    </select>
 </mapper>

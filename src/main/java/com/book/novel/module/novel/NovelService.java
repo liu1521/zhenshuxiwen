@@ -4,16 +4,13 @@ import com.book.novel.common.constant.ResponseCodeConst;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
+import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.common.service.ImgFileService;
 import com.book.novel.module.chapter.ChapterMapper;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
-import com.book.novel.module.novel.bo.PageBO;
 import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
-import com.book.novel.module.novel.dto.CategoryNovelQueryDTO;
-import com.book.novel.module.novel.dto.KeyNovelQueryDTO;
-import com.book.novel.module.novel.dto.NovelDTO;
-import com.book.novel.module.novel.dto.NovelDetailDTO;
+import com.book.novel.module.novel.dto.*;
 import com.book.novel.module.novel.entity.NovelEntity;
 import com.book.novel.module.novel.vo.NovelCreateVO;
 import com.book.novel.module.novel.vo.NovelInfoVO;
@@ -64,43 +61,25 @@ public class NovelService {
         if (totalCount == 0) {
             return ResponseDTO.wrap(NovelResponseCodeConstant.NOVEL_CATEGORY_ID_INVALID);
         }
-        // 设置分页查询返回参数
-        PageResultDTO<NovelDTO> resultDTO = getPageResultDTO(pageParamDTO, totalCount);
-        if (pageParamDTO.getSearchCount()) {
-            resultDTO.setTotal(totalCount);
-        }
-
         // 分页查询小说信息
         PageBO pageBO = new PageBO(pageParamDTO);
-        List<NovelDTO> novels = novelUserMapper.listNovelByCategory(pageBO, pageParamDTO.getCategoryId());
+        List<NovelDTO> novelDTOList = novelUserMapper.listNovelByCategory(pageBO, pageParamDTO.getCategoryId());
+        this.setBase64Pic(novelDTOList);
 
-        this.setBase64Pic(novels);
-        resultDTO.setList(novels);
+        // 设置分页查询返回参数
+        PageResultDTO<NovelDTO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount,novelDTOList);
         return ResponseDTO.succData(resultDTO);
     }
 
     public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(KeyNovelQueryDTO pageParamDTO) {
         int totalCount = novelUserMapper.getNovelCountByKey(pageParamDTO.getKey());
 
-        PageResultDTO<NovelDTO> resultDTO = getPageResultDTO(pageParamDTO, totalCount);
-        if (pageParamDTO.getSearchCount()) {
-            resultDTO.setTotal(totalCount);
-        }
-
         PageBO pageBO = new PageBO(pageParamDTO);
-        List<NovelDTO> novels = novelUserMapper.listNovelByKey(pageBO, pageParamDTO.getKey());
-
-        this.setBase64Pic(novels);
-        resultDTO.setList(novels);
+        List<NovelDTO> novelDTOList = novelUserMapper.listNovelByKey(pageBO, pageParamDTO.getKey());
+        this.setBase64Pic(novelDTOList);
+        // 设置分页查询返回参数
+        PageResultDTO<NovelDTO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount, novelDTOList);
         return ResponseDTO.succData(resultDTO);
-    }
-
-    private PageResultDTO<NovelDTO> getPageResultDTO(PageParamDTO pageParamDTO, Integer totalCount) {
-        int pageSize = pageParamDTO.getPageSize();
-        int currentPage = pageParamDTO.getCurrentPage();
-        int pages = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
-
-        return new PageResultDTO<>(currentPage, pageSize, pages);
     }
 
     public ResponseDTO<NovelDetailDTO> getNovelDetailById(Integer novelId) {
@@ -147,8 +126,8 @@ public class NovelService {
         return rankNovelDTOList;
     }
 
-    private void setBase64Pic(List<NovelDTO> list) {
-        list.forEach(novelDTO -> novelDTO.setPic(imgFileService.getNovelCoverImg(novelDTO.getPic())));
+    private void setBase64Pic(List<NovelDTO> novelDTOList) {
+        novelDTOList.forEach(novelDTO -> novelDTO.setPic(imgFileService.getNovelCoverImg(novelDTO.getPic())));
     }
 
     private List<String> novelList2JsonList(List<NovelDTO> novelDTOList) {
@@ -166,16 +145,12 @@ public class NovelService {
     public ResponseDTO<PageResultDTO<NovelDTO>> listAllNovel(PageParamDTO pageParamDTO) {
         int totalCount = novelMapper.getNovelCount();
 
-        PageResultDTO<NovelDTO> resultDTO = getPageResultDTO(pageParamDTO, totalCount);
-        if (pageParamDTO.getSearchCount()) {
-            resultDTO.setTotal(totalCount);
-        }
 
         PageBO pageBO = new PageBO(pageParamDTO);
-        List<NovelDTO> novels = novelUserMapper.listAllNovel(pageBO);
+        List<NovelDTO> novelDTOList = novelUserMapper.listAllNovel(pageBO);
+        this.setBase64Pic(novelDTOList);
 
-        this.setBase64Pic(novels);
-        resultDTO.setList(novels);
+        PageResultDTO<NovelDTO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount, novelDTOList);
         return ResponseDTO.succData(resultDTO);
     }
 
@@ -245,5 +220,22 @@ public class NovelService {
         chapterMapper.deleteChapterByNovelId(novelId);
         novelMapper.deleteNovelByNovelId(novelId);
         return ResponseDTO.succ();
+    }
+
+    public ResponseDTO<PageResultDTO<NovelExamineDTO>> listNovelUnExamine(PageParamDTO pageParamDTO) {
+        Integer totalCount = novelMapper.countUnExamineNovel();
+
+
+        PageBO pageBO = new PageBO(pageParamDTO);
+        List<NovelDetailDTO> novelDetailDTOList = novelMapper.listNovelUnExamine(pageBO);
+
+        List<NovelExamineDTO> novelExamineDTOList = new ArrayList<>();
+        novelDetailDTOList.forEach(novelDetailDTO -> {
+            novelDetailDTO.setPic(imgFileService.getNovelCoverImg(novelDetailDTO.getPic()));
+            novelExamineDTOList.add(new NovelExamineDTO(novelDetailDTO));
+        });
+
+        PageResultDTO<NovelExamineDTO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount, novelExamineDTOList);
+        return ResponseDTO.succData(resultDTO);
     }
 }

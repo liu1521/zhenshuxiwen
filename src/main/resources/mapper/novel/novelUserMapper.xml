@@ -228,4 +228,15 @@
         where
         author_id=#{authorId}
     </select>
+
+    <select id="listNovelDetailDTOByStatus" resultMap="novelDetailDTO">
+        select
+        <include refid="novelDetailDTOAll"></include>
+        from
+        novel n
+        left join user u on u.id=n.author_id
+        left join category ca on ca.id=n.category_id
+        where
+        n.status=#{status}
+    </select>
 </mapper>

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class UserLoginFormVO {
 
     @NotNull(message = "登陆名不能为空")
-    @ApiModelProperty(example = "admin")
+    @ApiModelProperty(example = "1111@qq.com")
     private String loginName;
 
     @NotNull(message = "密码不能为空")

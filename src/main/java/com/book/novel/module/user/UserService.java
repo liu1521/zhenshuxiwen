@@ -2,7 +2,10 @@ package com.book.novel.module.user;
 
 import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.common.domain.PageParamDTO;
+import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
+import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.common.service.ImgFileService;
 import com.book.novel.module.login.LoginService;
 import com.book.novel.module.login.LoginTokenService;
@@ -78,8 +81,8 @@ public class UserService {
         userMapper.updateUserLoginInfo(userEntity);
     }
 
-    public UserEntity getUserByUsernameAndPassword(String loginName, String loginPwd) {
-        return userMapper.getUserByUsernameAndPassword(loginName, loginPwd);
+    public UserEntity getUserByEmailAndPassword(String loginName, String loginPwd) {
+        return userMapper.getUserByEmailAndPassword(loginName, loginPwd);
     }
 
     public ResponseDTO<ResponseCodeConst> testUsername(String username) {
@@ -221,6 +224,18 @@ public class UserService {
         return ResponseDTO.succ();
     }
 
+    public ResponseDTO registerToAuthorExamine(Integer userId, boolean success) {
+        if (success) {
+            // 审核通过
+            if (userMapper.updateRoleToAuthor(userId) <= 0) {
+                return ResponseDTO.wrap(UserResponseCodeConst.USER_NOT_EXISTS);
+            }
+        } else {
+            // 审核未通过
+        }
+        return updateUserStatus(UserStatusEnum.NORMAL.getValue(), userId);
+    }
+
     public ResponseDTO favorites(Integer novelId, HttpServletRequest request) {
         NovelDetailDTO novelDetail = novelUserMapper.getNovelDetailById(novelId);
         if (novelDetail == null) {
@@ -261,12 +276,36 @@ public class UserService {
         return ResponseDTO.succ();
     }
 
-    public ResponseDTO<List<UserBO>> listRegisterToAuthorUser() {
-        List<UserEntity> userEntities = userMapper.listRegisterToAuthorUser();
-        List<UserBO> list = new ArrayList<>();
+    public ResponseDTO<PageResultDTO<UserBO>> listRegisterToAuthorUser(PageParamDTO pageParamDTO) {
+        Integer totalCount = userMapper.countRegisterToAuthorUser();
 
-        userEntities.forEach(user -> list.add(new UserBO(user)));
 
-        return ResponseDTO.succData(list);
+        PageBO pageBO = new PageBO(pageParamDTO);
+        List<UserEntity> userEntityList = userMapper.listRegisterToAuthorUser(pageBO);
+
+        List<UserBO> userBOList = new ArrayList<>();
+        userEntityList.forEach(userEntity -> userBOList.add(new UserBO(userEntity)));
+
+        PageResultDTO<UserBO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount, userBOList);
+        this.setBase64Pic(userBOList);
+        return ResponseDTO.succData(resultDTO);
+    }
+
+    private void setBase64Pic(List<UserBO> list) {
+        list.forEach(userBO -> userBO.setHeadImg(imgFileService.getUserHeadImg(userBO.getHeadImg())));
+    }
+
+    public ResponseDTO kickUser(Integer userId, boolean kick) {
+        if (kick) {
+            // 封禁原因
+            // ...
+
+            return updateUserStatus(UserStatusEnum.DISABLED.getValue(), userId);
+        } else {
+            // 解封原因
+            // ...
+
+            return updateUserStatus(UserStatusEnum.NORMAL.getValue(), userId);
+        }
     }
 }

@@ -81,11 +81,11 @@ public class LoginService {
             return ResponseDTO.wrap(UserResponseCodeConst.VERIFICATION_CODE_INVALID);
         }
 
-        String email = userService.getEmailByUsername(userLoginFormVO.getLoginName());
+//        String email = userService.getEmailByUsername(userLoginFormVO.getLoginName());
 
-        String encryptPassword = Md5Util.encryptPassword(userLoginFormVO.getLoginPwd(), email);
+        String encryptPassword = Md5Util.encryptPassword(userLoginFormVO.getLoginPwd(), userLoginFormVO.getLoginName());
 
-        UserEntity userEntity = userService.getUserByUsernameAndPassword(userLoginFormVO.getLoginName(), encryptPassword);
+        UserEntity userEntity = userService.getUserByEmailAndPassword(userLoginFormVO.getLoginName(), encryptPassword);
         if (userEntity == null) {
             return ResponseDTO.wrap(UserResponseCodeConst.LOGIN_FAILED);
         }

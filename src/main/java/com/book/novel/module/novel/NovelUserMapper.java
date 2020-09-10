@@ -1,8 +1,6 @@
 package com.book.novel.module.novel;
 
-import com.book.novel.common.domain.PageParamDTO;
-import com.book.novel.common.domain.ResponseDTO;
-import com.book.novel.module.novel.bo.PageBO;
+import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.novel.dto.NovelDetailDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -40,4 +38,5 @@ public interface NovelUserMapper {
 
     List<NovelDetailDTO> listNovelDetailDTOByAuthorId(@Param("authorId") Integer requestUserId);
 
+    List<NovelDetailDTO> listNovelDetailDTOByStatus(@Param("status") Integer status);
 }

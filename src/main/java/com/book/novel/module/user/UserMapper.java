@@ -1,5 +1,6 @@
 package com.book.novel.module.user;
 
+import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.module.user.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,7 +23,7 @@ public interface UserMapper {
 
     void updateUserLoginInfo(UserEntity userEntity);
 
-    UserEntity getUserByUsernameAndPassword(@Param("username") String loginName, @Param("password") String loginPwd);
+    UserEntity getUserByEmailAndPassword(@Param("email") String email, @Param("password") String loginPwd);
 
     Integer getIdByUsername(@Param("username") String username);
 
@@ -44,5 +45,9 @@ public interface UserMapper {
 
     void updateRecommendAddOne();
 
-    List<UserEntity> listRegisterToAuthorUser();
+    List<UserEntity> listRegisterToAuthorUser(PageBO pageBO);
+
+    Integer updateRoleToAuthor(Integer userId);
+
+    Integer countRegisterToAuthorUser();
 }

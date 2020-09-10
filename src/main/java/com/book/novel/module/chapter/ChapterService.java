@@ -1,9 +1,9 @@
 package com.book.novel.module.chapter;
 
 import com.book.novel.common.constant.ResponseCodeConst;
-import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
+import com.book.novel.common.domain.bo.PageBO;
 import com.book.novel.module.chapter.constant.ChapterResponseCodeConstant;
 import com.book.novel.module.chapter.dto.ChapterCatalogDTO;
 import com.book.novel.module.chapter.dto.ChapterDetailDTO;
@@ -45,25 +45,13 @@ public class ChapterService {
         if (totalCount == 0) {
             return ResponseDTO.wrap(ChapterResponseCodeConstant.NOVEL_ID_VALID);
         }
-        PageResultDTO<ChapterCatalogDTO> resultDTO = getPageResultDTO(pageParamDTO, totalCount);
-        if (pageParamDTO.getSearchCount()) {
-            resultDTO.setTotal(totalCount);
-        }
 
-        if (resultDTO.getPageSize()  < 0) resultDTO.setPageSize(totalCount);
-        int start = (resultDTO.getCurrentPage()-1) * resultDTO.getPageSize();
-        List<ChapterCatalogDTO> chapters = chapterMapper.listChapterByNovelId(start, resultDTO.getPageSize(), pageParamDTO.getNovelId());
+        if (pageParamDTO.getPageSize()  < 0) pageParamDTO.setPageSize(totalCount);
+        PageBO pageBO = new PageBO(pageParamDTO);
+        List<ChapterCatalogDTO> catalogDTOList = chapterMapper.listChapterByNovelId(pageBO, pageParamDTO.getNovelId());
 
-        resultDTO.setList(chapters);
+        PageResultDTO<ChapterCatalogDTO> resultDTO = PageResultDTO.instance(pageParamDTO, totalCount, catalogDTOList);
         return ResponseDTO.succData(resultDTO);
-    }
-
-    private PageResultDTO<ChapterCatalogDTO> getPageResultDTO(PageParamDTO pageParamDTO, Integer totalCount) {
-        int pageSize = pageParamDTO.getPageSize();
-        int currentPage = pageParamDTO.getCurrentPage();
-        int pages = totalCount % pageSize == 0 ? totalCount/pageSize : totalCount/pageSize+1;
-        PageResultDTO<ChapterCatalogDTO> resultDTO = new PageResultDTO<>(currentPage, pageSize, pages);
-        return resultDTO;
     }
 
     public ResponseDTO<ChapterDetailDTO> getChapterDetailByChapterId(Integer chapterId) {

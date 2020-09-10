@@ -1,10 +1,14 @@
 package com.book.novel.module.novel;
 
+import com.book.novel.common.domain.bo.PageBO;
+import com.book.novel.module.novel.dto.NovelDetailDTO;
 import com.book.novel.module.novel.entity.NovelEntity;
 import com.book.novel.module.novel.vo.NovelInfoVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @Author: liu
@@ -34,4 +38,10 @@ public interface NovelMapper {
     void deleteNovelByNovelId(@Param("novelId") Integer novelId);
 
     Integer getAuthorIdByNovelId(@Param("novelId") Integer novelId);
+
+    NovelEntity getByNovelId(@Param("novelId") Integer novelId);
+
+    Integer countUnExamineNovel();
+
+    List<NovelDetailDTO> listNovelUnExamine(@Param("pageBO") PageBO pageBO);
 }

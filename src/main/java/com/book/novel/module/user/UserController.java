@@ -4,6 +4,8 @@ import com.book.novel.common.anno.NeedAdmin;
 import com.book.novel.common.anno.NeedUser;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.common.domain.PageParamDTO;
+import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
@@ -95,21 +97,35 @@ public class UserController {
     @ApiOperation(value = "获取想要注册成为作家的所有用户")
     @GetMapping("/api/admin/registerToAuthor/get")
     @NeedAdmin
-    public ResponseDTO<List<UserBO>> listRegisterToAuthorUser() {
-        return userService.listRegisterToAuthorUser();
+    public ResponseDTO<PageResultDTO<UserBO>> listRegisterToAuthorUser(@Valid @RequestBody PageParamDTO pageParamDTO) {
+        return userService.listRegisterToAuthorUser(pageParamDTO);
     }
 
-//    @ApiOperation(value = "注册成为作者审核通过")
-//    @PostMapping("/api/admin/registerToAuthor/success")
-//    @NeedAdmin
-//    public ResponseDTO registerToAuthorSuccess(@RequestParam Integer userId) {
-//        return userService.registerToAuthorExamine(UserStatusEnum.NORMAL.getValue(), userId);
-//    }
+    @ApiOperation(value = "注册成为作者审核通过")
+    @PostMapping("/api/admin/registerToAuthor/success")
+    @NeedAdmin
+    public ResponseDTO registerToAuthorSuccess(@RequestParam Integer userId) {
+        return userService.registerToAuthorExamine(userId, true);
+    }
 
     @ApiOperation(value = "注册成为作者审核拒绝")
     @PostMapping("/api/admin/registerToAuthor/fail")
     @NeedAdmin
     public ResponseDTO registerToAuthorFail(@RequestParam Integer userId) {
-        return userService.updateUserStatus(UserStatusEnum.NORMAL.getValue(), userId);
+        return userService.registerToAuthorExamine(userId, false);
+    }
+
+    @ApiOperation(value = "封号")
+    @PostMapping("/api/admin/user/kick")
+    @NeedAdmin
+    public ResponseDTO kickUser(@RequestParam Integer userId) {
+        return userService.kickUser(userId, true);
+    }
+
+    @ApiOperation(value = "解封账号")
+    @PostMapping("/api/admin/user/unkick")
+    @NeedAdmin
+    public ResponseDTO unKickUser(@RequestParam Integer userId) {
+        return userService.kickUser(userId, false);
     }
 }

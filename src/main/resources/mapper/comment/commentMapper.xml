@@ -11,7 +11,8 @@
         where
         c.novel_id = #{novelId}
     </select>
-    <select id="getCountByUserId">
+
+    <select id="getCountByUserId" resultType="java.lang.Integer">
         select count(1) from comment c where c.user_id = #{userId}
     </select>
 

@@ -1,7 +1,6 @@
 package com.book.novel.module.comment;
 
 import com.book.novel.common.constant.ResponseCodeConst;
-import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
 import com.book.novel.module.comment.dto.CommentDetailDTO;
@@ -26,35 +25,17 @@ public class CommentService {
     private CommentMapper commentMapper;
 
     /**
-     *
-     * @param pageParamDTO
-     * @param totalCount
-     * @return
-     */
-    private PageResultDTO<CommentDetailDTO> getPageResultDTO(PageParamDTO pageParamDTO, Integer totalCount) {
-        int pageSize = pageParamDTO.getPageSize();
-        int currentPage = pageParamDTO.getCurrentPage();
-        int pages = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
-        PageResultDTO<CommentDetailDTO> resultDTO = new PageResultDTO<>(currentPage, pageSize, pages);
-        return resultDTO;
-    }
-    private PageResultDTO<CommentUserIdDTO> getPageResultDTO(PageParamDTO pageParamDTO, Integer totalCount,boolean isCommentUserIdDTO) {
-        int pageSize = pageParamDTO.getPageSize();
-        int currentPage = pageParamDTO.getCurrentPage();
-        int pages = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
-        PageResultDTO<CommentUserIdDTO> resultDTO = new PageResultDTO<>(currentPage, pageSize, pages);
-        return resultDTO;
-    }
-
-
-    /**
      * 根据小说查询对应评论(分页)
      * @param pageParamDTO
      * @return
      */
     public ResponseDTO<PageResultDTO<CommentDetailDTO>>  listCommentByNovelIdOrderByUp(CommentQueryByNovelIdDTO pageParamDTO){
-        PageResultDTO<CommentDetailDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByNovelId(pageParamDTO.getNovelId()));
-        pageResultDTO.setList(commentMapper.listCommentByNovelIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(),pageParamDTO.getNovelId()));
+        PageResultDTO<CommentDetailDTO> pageResultDTO = PageResultDTO.instance(
+                pageParamDTO,
+                commentMapper.getCountByNovelId(pageParamDTO.getNovelId()),
+                commentMapper.listCommentByNovelIdOrderByUp((pageParamDTO.getCurrentPage()-1)*pageParamDTO.getPageSize()
+                        ,pageParamDTO.getPageSize()
+                        ,pageParamDTO.getNovelId()));
         return ResponseDTO.succData(pageResultDTO);
     }
 
@@ -64,8 +45,14 @@ public class CommentService {
      * @return
      */
     public ResponseDTO<PageResultDTO<CommentUserIdDTO>>  listCommentByUserIdOrderByUp(CommentQueryByUserIdDTO pageParamDTO){
-        PageResultDTO<CommentUserIdDTO> pageResultDTO = getPageResultDTO(pageParamDTO,commentMapper.getCountByUserId(pageParamDTO.getUserId()),false);
-        pageResultDTO.setList(commentMapper.listCommentByUserIdOrderByUp((pageResultDTO.getCurrentPage()-1)*pageResultDTO.getPageSize(),pageResultDTO.getPageSize(), pageParamDTO.getUserId()));
+        PageResultDTO<CommentUserIdDTO> pageResultDTO = PageResultDTO.instance(
+                pageParamDTO,
+                commentMapper.getCountByUserId(pageParamDTO.getUserId()),
+                commentMapper.listCommentByUserIdOrderByUp(
+                        (pageParamDTO.getCurrentPage()-1)*pageParamDTO.getPageSize(),
+                        pageParamDTO.getPageSize(),
+                        pageParamDTO.getUserId())
+                    );
         return ResponseDTO.succData(pageResultDTO);
     }
 

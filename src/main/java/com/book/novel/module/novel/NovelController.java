@@ -1,15 +1,13 @@
 package com.book.novel.module.novel;
 
+import com.book.novel.common.anno.NeedAdmin;
 import com.book.novel.common.anno.NeedAuthor;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.RedisKeyConstant;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
-import com.book.novel.module.novel.dto.CategoryNovelQueryDTO;
-import com.book.novel.module.novel.dto.KeyNovelQueryDTO;
-import com.book.novel.module.novel.dto.NovelDTO;
-import com.book.novel.module.novel.dto.NovelDetailDTO;
+import com.book.novel.module.novel.dto.*;
 import com.book.novel.module.novel.vo.NovelCreateVO;
 import com.book.novel.module.novel.vo.NovelInfoVO;
 import io.swagger.annotations.Api;
@@ -148,5 +146,12 @@ public class NovelController {
     @NeedAuthor
     public ResponseDTO<List<NovelDetailDTO>> listNovelByAuthor(HttpServletRequest request) {
         return novelService.listNovelDetailDTOByAuthor(request);
+    }
+
+    @ApiOperation(value = "获取所有未审核小说")
+    @GetMapping("/api/novel/admin/unExamine/get")
+    @NeedAdmin
+    public ResponseDTO<PageResultDTO<NovelExamineDTO>> listNovelUnExamine(@Valid @RequestBody PageParamDTO pageParamDTO) {
+        return novelService.listNovelUnExamine(pageParamDTO);
     }
 }
