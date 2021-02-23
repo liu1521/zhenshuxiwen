@@ -55,7 +55,7 @@ public class ZhenShuXiWenInterceptor extends HandlerInterceptorAdapter {
 
         // 放行options请求
         if (RequestMethodConstant.OPTIONS.equals(request.getMethod())) {
-            return true;
+            return false;
         }
 
         //放行swagger

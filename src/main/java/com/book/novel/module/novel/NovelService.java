@@ -1,6 +1,7 @@
 package com.book.novel.module.novel;
 
 import com.book.novel.common.constant.ResponseCodeConst;
+import com.book.novel.common.domain.PageByKeyParamDTO;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
@@ -17,6 +18,7 @@ import com.book.novel.module.novel.vo.NovelCreateVO;
 import com.book.novel.module.novel.vo.NovelInfoVO;
 import com.book.novel.util.BeanUtil;
 import com.book.novel.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import java.util.List;
  * @Description: 小说相关业务
  */
 
+@Slf4j
 @Service
 public class NovelService {
 
@@ -72,7 +75,7 @@ public class NovelService {
         return ResponseDTO.succData(resultDTO);
     }
 
-    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(KeyNovelQueryDTO pageParamDTO) {
+    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(PageByKeyParamDTO pageParamDTO) {
         int totalCount = novelUserMapper.getNovelCountByKey(pageParamDTO.getKey());
 
         PageBO pageBO = new PageBO(pageParamDTO);

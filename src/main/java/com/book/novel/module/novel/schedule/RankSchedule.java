@@ -26,7 +26,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 0/8 * * ?")
     public void updateNovelRankHits() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_HITS, 30);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_HITS, 5);
     }
 
     /**
@@ -34,7 +34,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 4 * * ?")
     public void updateNovelRankHitsDay() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_DAY, 10);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_DAY, 5);
         novelService.updateNovelHitsTo0(NovelHitsKeyConstant.HITS_DAY);
     }
 
@@ -43,7 +43,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 5 ? * 1")
     public void updateNovelRankHitsWeek() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_WEEK, 10);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_WEEK, 5);
         novelService.updateNovelHitsTo0(NovelHitsKeyConstant.HITS_WEEK);
     }
 
@@ -52,7 +52,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 6 1 * ?")
     public void updateNovelRankHitsMonth() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_MONTH, 10);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_MONTH, 5);
         novelService.updateNovelHitsTo0(NovelHitsKeyConstant.HITS_MONTH);
     }
 
@@ -61,7 +61,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 1/8 * * ?")
     public void updateNovelRankRating() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_RATING, 10);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_RATING, 5);
     }
 
     /**
@@ -69,7 +69,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 2/8 * * ?")
     public void updateNovelRankFavorites() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_FAVORITES, 10);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_FAVORITES, 5);
     }
 
     /**
@@ -77,7 +77,7 @@ public class RankSchedule {
      */
     @Scheduled(cron = "0 0 3/8 * * ?")
     public void updateNovelRankRecommend() {
-        novelService.updateNovelRank(RedisKeyConstant.RANK_RECOMMEND, 10);
+        novelService.updateNovelRank(RedisKeyConstant.RANK_RECOMMEND, 5);
     }
 
 }

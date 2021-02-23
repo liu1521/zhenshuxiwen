@@ -4,6 +4,7 @@ import com.book.novel.common.anno.NeedAdmin;
 import com.book.novel.common.anno.NeedAuthor;
 import com.book.novel.common.anno.NoNeedLogin;
 import com.book.novel.common.constant.RedisKeyConstant;
+import com.book.novel.common.domain.PageByKeyParamDTO;
 import com.book.novel.common.domain.PageParamDTO;
 import com.book.novel.common.domain.PageResultDTO;
 import com.book.novel.common.domain.ResponseDTO;
@@ -53,7 +54,7 @@ public class NovelController {
     @ApiOperation(value = "分页搜索查询小说")
     @PostMapping("/api/novel/listByKey")
     @NoNeedLogin
-    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(@Valid @RequestBody KeyNovelQueryDTO pageParamDTO) {
+    public ResponseDTO<PageResultDTO<NovelDTO>> listNovelByKey(@Valid @RequestBody PageByKeyParamDTO pageParamDTO) {
         return novelService.listNovelByKey(pageParamDTO);
     }
 
@@ -73,7 +74,7 @@ public class NovelController {
 
     @ApiOperation(value = "上传小说封面")
     @PostMapping("/api/novel/cover/upload")
-    @NoNeedLogin
+    @NeedAuthor
     public ResponseDTO uploadNovelCover(@RequestParam("avatar") MultipartFile multipartFile) {
         return novelService.uploadNovelCover(multipartFile);
     }

@@ -31,5 +31,4 @@ public class PageBO {
             orderKey = NovelOrderKeyConstant.UPDATE_TIME;
         }
     }
-
 }

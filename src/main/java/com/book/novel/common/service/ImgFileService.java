@@ -123,7 +123,6 @@ public class ImgFileService {
         if (! img.exists()) {
             img = new File(path + File.separator + IMG_DEFAULT);
         }
-
         byte[] bytes = new byte[0];
         try {
             bytes = IOUtils.toByteArray(new FileInputStream(img));

@@ -52,6 +52,7 @@ public class PageResultDTO<T> {
 
 
     public static <T> PageResultDTO<T> instance(PageParamDTO pageParamDTO, Integer totalCount, List<T> list) {
+        if (pageParamDTO.getSearchCount() == null) pageParamDTO.setSearchCount(false);
         PageResultDTO<T> resultDTO = new PageResultDTO<>(pageParamDTO, totalCount);
         resultDTO.list = list;
         return resultDTO;
