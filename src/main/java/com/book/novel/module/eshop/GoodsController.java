@@ -76,7 +76,21 @@ public class GoodsController {
     @GetMapping("/api/history/author/{uid}")
     @NoNeedLogin
     public ResponseDTO<List<HistoryAuthorDTO>> listHistoryAuthor(@PathVariable Integer uid) {
-
-        return null;
+        List<HistoryAuthorDTO> historyAuthorDTOS = goodsService.listHistoryAuthor(uid);
+        return ResponseDTO.succData(historyAuthorDTOS);
     }
+    @ApiOperation("获取最近7天每日阅读量")
+    @GetMapping("/api/history/week/{uid}")
+    @NoNeedLogin
+    public ResponseDTO<List<HistoryWeekDTO>> listHistoryWeek(@PathVariable Integer uid) {
+        return ResponseDTO.succData(goodsService.listHistoryWeek(uid));
+    }
+    @ApiOperation("获取每种小说类型阅读量")
+    @GetMapping("/api/history/category/{uid}")
+    @NoNeedLogin
+    public ResponseDTO<List<HistoryCategoryDTO>> listHistoryCategory(@PathVariable Integer uid) {
+        return ResponseDTO.succData(goodsService.listHistoryCategory(uid));
+    }
+
+
 }

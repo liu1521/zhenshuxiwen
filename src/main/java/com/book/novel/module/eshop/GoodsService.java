@@ -1,6 +1,7 @@
 package com.book.novel.module.eshop;
 
 import com.book.novel.module.eshop.dto.*;
+import com.book.novel.module.eshop.entity.HistoryAuthorBO;
 import com.book.novel.module.eshop.entity.ShoppingCarEntity;
 import com.book.novel.module.login.LoginTokenService;
 import com.book.novel.module.login.bo.RequestTokenBO;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,5 +77,26 @@ public class GoodsService {
         }
 
         return null;
+    }
+
+    public List<HistoryAuthorDTO> listHistoryAuthor(Integer id){
+        List<HistoryAuthorBO> historyAuthorBOS = goodsMapper.listHistoryAuthor(id);
+        HashMap<String, HistoryAuthorDTO> hashMap = new HashMap<>();
+        for (HistoryAuthorBO hb:historyAuthorBOS){
+            HistoryAuthorDTO orDefault = hashMap.getOrDefault(hb.getUsername(),
+                    new HistoryAuthorDTO(hb.getUsername(),0,new ArrayList<>()));
+            orDefault.getChildren().add(new HistoryBookDTO(hb.getTitle(),hb.getValue()));
+            orDefault.setValue(orDefault.getValue()+hb.getValue());
+            hashMap.put(hb.getUsername(),orDefault);
+        }
+        return new ArrayList<>(hashMap.values());
+    }
+
+    public List<HistoryWeekDTO> listHistoryWeek(Integer uid){
+        return goodsMapper.listHistoryWeek(uid);
+    }
+
+    List<HistoryCategoryDTO> listHistoryCategory(Integer uid){
+        return goodsMapper.listHistoryCategory(uid);
     }
 }

@@ -142,5 +142,43 @@
         where
             gb.id = #{cid}
     </select>
-
+    <select id="listHistoryAuthor" resultType="com.book.novel.module.eshop.entity.HistoryAuthorBO" parameterType="java.lang.Integer">
+        SELECT
+            n.title,
+            u.username,
+            hb.novel_id,
+            count(hb.novel_id) AS value
+        FROM
+            history_book hb
+        LEFT JOIN novel n ON hb.novel_id = n.id
+        LEFT JOIN user u ON u.id = n.author_id
+        WHERE
+            hb.user_id = #{id}
+        GROUP BY
+            hb.novel_id
+    </select>
+    
+    <select id="listHistoryWeek" resultType="com.book.novel.module.eshop.dto.HistoryWeekDTO">
+        SELECT
+            COUNT(user_id) as number,
+            DATE(create_time) AS dayTime
+        FROM
+            history_book
+        WHERE
+            TO_DAYS(NOW()) - TO_DAYS(create_time) &lt; 7 and user_id = #{uid}
+        GROUP BY
+            dayTime
+    </select>
+    <select id="listHistoryCategory" resultType="com.book.novel.module.eshop.dto.HistoryCategoryDTO">
+        SELECT
+            count(hb.user_id) as number,
+            ca.category_name
+        FROM
+            history_book hb
+        LEFT JOIN novel n ON hb.novel_id = n.id
+        LEFT JOIN category ca ON n.category_id = ca.id
+        WHERE
+            hb.user_id = #{uid}
+        GROUP BY ca.category_name
+    </select>
 </mapper>

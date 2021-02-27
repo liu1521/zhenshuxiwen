@@ -1,5 +1,6 @@
 package com.book.novel.module.eshop.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -11,11 +12,12 @@ import java.util.List;
  */
 
 @Data
+@AllArgsConstructor
 public class HistoryAuthorDTO {
 
     private String name;
 
-    private String value;
+    private Integer value;
 
     private List<HistoryBookDTO> children;
 

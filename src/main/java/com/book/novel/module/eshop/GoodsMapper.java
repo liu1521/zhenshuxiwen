@@ -1,9 +1,7 @@
 package com.book.novel.module.eshop;
 
-import com.book.novel.module.eshop.dto.GoodsDTO;
-import com.book.novel.module.eshop.dto.GoodsDetailDTO;
-import com.book.novel.module.eshop.dto.GoodsQueryDTO;
-import com.book.novel.module.eshop.dto.ShoppingCarDTO;
+import com.book.novel.module.eshop.dto.*;
+import com.book.novel.module.eshop.entity.HistoryAuthorBO;
 import com.book.novel.module.eshop.entity.ShoppingCarEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -34,4 +32,10 @@ public interface GoodsMapper {
     GoodsDetailDTO getGoodsDetailById(Integer cid);
 
     List<GoodsDTO> listFavoriteGoods(@Param("favoriteAuthor") List<String> favoriteAuthor);
+
+    List<HistoryAuthorBO> listHistoryAuthor(@Param("id") Integer id);
+
+    List<HistoryWeekDTO> listHistoryWeek(@Param("uid")Integer uid);
+
+    List<HistoryCategoryDTO> listHistoryCategory(@Param("uid")Integer uid);
 }
