@@ -17,6 +17,7 @@ import com.book.novel.module.login.bo.RequestTokenBO;
 import com.book.novel.module.novel.NovelMapper;
 import com.book.novel.module.novel.constant.NovelResponseCodeConstant;
 import com.book.novel.common.constant.ExamineStatusEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,10 +59,15 @@ public class ChapterService {
         return ResponseDTO.succData(resultDTO);
     }
 
-    public ResponseDTO<ChapterDetailDTO> getChapterDetailByChapterId(Integer chapterId) {
+    public ResponseDTO<ChapterDetailDTO> getChapterDetailByChapterId(Integer chapterId, HttpServletRequest request) {
         ChapterDetailDTO chapterDetailDTO = chapterNovelMapper.getChapterDetailByChapterId(chapterId);
-        novelMapper.updateHits(chapterDetailDTO.getNovelId());
 
+        novelMapper.updateHits(chapterDetailDTO.getNovelId());
+        String token = loginTokenService.getToken(request);
+        if (StringUtils.isNotEmpty(token)) {
+            RequestTokenBO userBO = loginTokenService.getUserTokenInfo(token);
+            novelMapper.saveHistory(userBO.getRequestUserId(), chapterDetailDTO.getNovelId());
+        }
         return ResponseDTO.succData(chapterDetailDTO);
     }
 

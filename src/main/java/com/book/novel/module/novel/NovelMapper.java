@@ -48,4 +48,10 @@ public interface NovelMapper {
     void updateNovelStatus(@Param("status") Integer status, @Param("novelId") Integer novelId);
 
     void updateNovelWordAddByNovelId(@Param("wordNum") Integer length, @Param("novelId") Integer novelId);
+
+    void saveHistory(Integer uid, Integer nid);
+
+    List<Integer> listNovelIdByUserId(Integer uid);
+
+    List<String> listAuthorNameByNovelId(@Param("favoriteNovel") List<Integer> favoriteNovel);
 }

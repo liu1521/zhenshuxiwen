@@ -53,6 +53,18 @@
         )
     </insert>
 
+    <insert id="saveHistory">
+        insert into
+        history_book(
+        user_id,
+        novel_id
+        )
+        values(
+        #{uid}
+        #{nid}
+        )
+    </insert>
+
     <delete id="deleteNovelByNovelId">
         delete from
         novel
@@ -180,12 +192,37 @@
         n.id=#{novelId}
     </select>
 
-    <select id="countUnExamineNovel">
+    <select id="countUnExamineNovel" resultType="java.lang.Integer">
         select
         count(n.id)
         from
         novel n
         where
         n.status=0
+    </select>
+
+    <select id="listNovelIdByUserId" resultType="java.lang.Integer">
+        select
+        novel_id
+        from
+        history_book
+        where
+        user_id = #{uid}
+        group by novel_id
+        order by count(novel_id)
+        limit 0,5
+    </select>
+
+    <select id="listAuthorNameByNovelId" resultType="java.lang.String">
+        select
+        u.username
+        from
+        user u
+        left join novel n on u.id=n.author_id
+        where
+        n.id in
+        <foreach collection="favoriteNovel" index="index" item="novelId" open="(" close=")" separator=",">
+            #{novelId}
+        </foreach>
     </select>
 </mapper>

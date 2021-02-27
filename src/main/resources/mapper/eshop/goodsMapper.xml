@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.novel.module.eshop.GoodsMapper">
+
+    <sql id="all">
+        sc.id,
+        sc.user_id as userId,
+        sc.goods_id as goodsId,
+        sc.number,
+        sc.create_time as createTime,
+        sc.update_time as updateTIme,
+        sc.settled
+    </sql>
+
+    <sql id="shoppingCarGoodsInfo">
+        sc.goods_id as cid,
+        gb.title as name,
+        gb.cover as cover,
+        gb.introduce as introduce,
+        gb.price as price,
+        ca.category_name as tag,
+        sc.number as num,
+        gb.seller as seller,
+        gb.seller_id as sellerId,
+        sc.create_time as createTime
+    </sql>
+
+    <sql id="goodsInfo">
+        gb.id as cid,
+        gb.title as name,
+        gb.cover,
+        gb.author,
+        gb.introduce,
+        ca.category_name as tag,
+        gb.price
+    </sql>
+
+    <sql id="goodsDetailInfo">
+        gb.id as cid,
+        gb.title as name,
+        gb.cover,
+        gb.author,
+        gb.introduce,
+        ca.category_name as tag,
+        gb.price,
+        gb.seller,
+        gb.seller_id as sellerId,
+        gb.monthly_sales as monthlySales,
+        gb.total_sales as totalSales
+    </sql>
+
+    <insert id="save">
+        insert into
+            shopping_car(
+                user_id,
+                goods_id,
+                number
+            )
+        values (
+            #{userId},
+            #{goodsId},
+            #{number}
+        )
+    </insert>
+
+    <update id="updateNumById">
+        update
+            shopping_car
+        set
+            number = #{number}
+        where
+            id = #{id}
+    </update>
+
+    <select id="getUnsettledShoppingCarId" resultType="java.lang.Integer">
+        select
+            sc.id
+        from
+            shopping_car sc
+        where
+            sc.user_id = #{uid}
+            and sc.goods_id = #{cid}
+            and sc.settled = 0
+    </select>
+
+    <select id="listUnsettledByUserId" resultType="com.book.novel.module.eshop.dto.ShoppingCarDTO">
+        select
+        <include refid="shoppingCarGoodsInfo"></include>
+        from
+            shopping_car sc
+            left join g_book gb on sc.goods_id = gb.id
+            left join category ca on ca.id = gb.category_id
+        where
+            sc.user_id = #{userId}
+            and sc.settled = 0;
+    </select>
+
+    <select id="listGoodsByQueryInfo" resultType="com.book.novel.module.eshop.dto.GoodsDTO">
+        select
+        <include refid="goodsInfo"></include>
+        from
+            g_book gb
+            left join category ca on ca.id = gb.category_id
+        <where>
+            <if test="type != null">
+                ca.category_name = #{type}
+            </if>
+            <if test="name != null">
+                gb.title = #{name}
+            </if>
+            <if test="author != null">
+                gb.author = #{author}
+            </if>
+            <if test="sellerId != null">
+                gb.seller_id = #{sellerId}
+            </if>
+        </where>
+    </select>
+
+    <select id="listFavoriteGoods" resultType="com.book.novel.module.eshop.dto.GoodsDTO">
+        select
+        distinct
+        gb.total_sales,
+        <include refid="goodsInfo"></include>
+        from
+        g_book gb
+        left join category ca on ca.id = gb.category_id
+        where
+        gb.author in
+        <foreach collection="favoriteAuthor" index="index" item="author" open="(" close=")" separator=",">
+            #{author}
+        </foreach>
+        order by gb.total_sales desc
+    </select>
+
+    <select id="getGoodsDetailById" resultType="com.book.novel.module.eshop.dto.GoodsDetailDTO">
+        select
+        <include refid="goodsDetailInfo"></include>
+        from
+            g_book gb
+            left join category ca on ca.id = gb.category_id
+        where
+            gb.id = #{cid}
+    </select>
+
+</mapper>

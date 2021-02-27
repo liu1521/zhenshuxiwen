@@ -20,6 +20,7 @@ import com.book.novel.module.user.bo.UserBO;
 import com.book.novel.module.user.constant.UserResponseCodeConst;
 import com.book.novel.module.user.constant.UserSexEnum;
 import com.book.novel.module.user.constant.UserStatusEnum;
+import com.book.novel.module.user.dto.AddressDTO;
 import com.book.novel.module.user.entity.UserEntity;
 import com.book.novel.module.user.vo.UserInfoVO;
 import com.book.novel.module.user.vo.UserRegisterFormVO;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author: liu
@@ -307,5 +309,45 @@ public class UserService {
 
             return updateUserStatus(UserStatusEnum.NORMAL.getValue(), userId);
         }
+    }
+
+    public List<AddressDTO> listAddress(HttpServletRequest request) {
+        String token = loginTokenService.getToken(request);
+        RequestTokenBO userBO = loginTokenService.getUserTokenInfo(token);
+        return this.listAddressByUid(userBO.getRequestUserId());
+    }
+
+    public List<AddressDTO> listAddressByUid(Integer uid) {
+        return userMapper.listAddress(uid);
+    }
+
+    public void updateAddress(Integer uid, HttpServletRequest request, AddressDTO addressDTO) {
+//        String token = loginTokenService.getToken(request);
+//        RequestTokenBO userBO = loginTokenService.getUserTokenInfo(token);
+        if (Objects.isNull(addressDTO.getAddressId())) {
+            List<AddressDTO> addressDTOList = userMapper.listAddress(uid);
+            if (addressDTOList.size() < 1) {
+                addressDTO.setIsDefault(true);
+            }
+            userMapper.saveAddress(uid, addressDTO);
+        } else {
+            userMapper.updateAddress(addressDTO);
+        }
+    }
+
+    public boolean deleteAddress(Integer addressId) {
+        Integer num = userMapper.deleteAddress(addressId);
+        return num > 0;
+    }
+
+    public void updateDefaultAddress(Integer addressId, Integer uid) {
+        List<AddressDTO> addressDTOList = this.listAddressByUid(uid);
+        Integer num = userMapper.updateDefault(addressId, true);
+        if (num < 1) return;
+        addressDTOList.forEach(addressDTO -> {
+            if (addressDTO.getIsDefault()) {
+                userMapper.updateDefault(addressDTO.getAddressId(), false);
+            }
+        });
     }
 }

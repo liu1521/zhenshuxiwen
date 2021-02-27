@@ -28,6 +28,67 @@
         values (#{username}, #{email}, #{password}, #{sex})
     </insert>
 
+    <insert id="saveAddress">
+        insert into
+        address(
+        <if test="addressDTO.isDefault != null">
+            is_default,
+        </if>
+        address,
+        introduce,
+        receiver,
+        phone,
+        user_id)
+        values(
+        <if test="addressDTO.isDefault != null">
+            #{addressDTO.isDefault},
+        </if>
+        #{addressDTO.address},
+        #{addressDTO.introduce},
+         #{addressDTO.receiver},
+         #{addressDTO.phone},
+         #{uid})
+    </insert>
+
+    <delete id="deleteAddress">
+        delete from
+        address
+        where
+        id = #{addressId}
+        and
+        is_default = 0
+    </delete>
+
+    <update id="updateDefault">
+        update
+        address
+        set
+        is_default = #{isDefault}
+        where
+        id = #{addressId}
+    </update>
+
+    <update id="updateAddress">
+        update
+        address
+        <set>
+            <if test="introduce != null">
+                introduce = #{introduce},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="receiver != null">
+                receiver = #{receiver},
+            </if>
+            <if test="phone != null">
+                phone = #{phone}
+            </if>
+        </set>
+        where
+        id = #{addressId}
+    </update>
+
     <update id="updateRoleToAuthor">
         update
         user u
@@ -187,6 +248,20 @@
         user u
         where
         u.status=1
+    </select>
+
+    <select id="listAddress" resultType="com.book.novel.module.user.dto.AddressDTO">
+        select
+        id as addressId,
+        introduce,
+        address,
+        receiver,
+        phone,
+        is_default as isDefault
+        from
+        address
+        where
+        user_id = #{uid}
     </select>
 
 </mapper>

@@ -11,6 +11,7 @@ import com.book.novel.module.login.dto.LoginDetailDTO;
 import com.book.novel.module.novel.dto.NovelDTO;
 import com.book.novel.module.user.bo.UserBO;
 import com.book.novel.module.user.constant.UserStatusEnum;
+import com.book.novel.module.user.dto.AddressDTO;
 import com.book.novel.module.user.vo.UserInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -127,5 +128,40 @@ public class UserController {
     @NeedAdmin
     public ResponseDTO unKickUser(@RequestParam Integer userId) {
         return userService.kickUser(userId, false);
+    }
+
+    @ApiOperation(value = "获取当前用户收件信息")
+    @GetMapping("/api/user/info/address")
+    @NeedUser
+    public ResponseDTO<List<AddressDTO>> listAddress(HttpServletRequest request) {
+        return ResponseDTO.succData(userService.listAddress(request));
+    }
+
+    @ApiOperation(value = "修改当前用户收件信息")
+    @PostMapping("/api/user/info/address/{uid}")
+    @NoNeedLogin
+    public ResponseDTO updateAddress(@PathVariable Integer uid, HttpServletRequest request, @RequestBody AddressDTO addressDTO) {
+        userService.updateAddress(uid, request, addressDTO);
+        return ResponseDTO.succ();
+    }
+
+//    @ApiOperation(value = "删除当前用户指定收件信息")
+//    @PostMapping("/api/user/info/address/{addressId}")
+//    @NoNeedLogin
+//    public ResponseDTO deleteAddress(@PathVariable Integer addressId) {
+//        boolean deleted = userService.deleteAddress(addressId);
+//        if (deleted) {
+//            return ResponseDTO.succ();
+//        } else {
+//            return ResponseDTO.wrap(ResponseCodeConst.ERROR_PARAM);
+//        }
+//    }
+
+    @ApiOperation(value = "修改默认收件地址")
+    @PostMapping("/api/user/info/address/default/{addressId}/{uid}")
+    @NoNeedLogin
+    public ResponseDTO updateDefaultAddress(@PathVariable Integer addressId, @PathVariable Integer uid) {
+        userService.updateDefaultAddress(addressId, uid);
+        return ResponseDTO.succ();
     }
 }
